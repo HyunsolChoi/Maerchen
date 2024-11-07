@@ -1,4 +1,4 @@
-# Maechen
+# Maerchen
 Site about Movies, Märchen means fairy tales in German. 
 
 # Getting Started with Create React App
