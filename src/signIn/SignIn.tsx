@@ -141,9 +141,9 @@ function SignIn() {
                 )}
                 <div className="options">
                     <p>
-                        <a onClick={toggleSignUp} className="link">
+                        <div onClick={toggleSignUp} className="link">
                             {isSignUp ? '이미 회원이신가요?' : '회원이 아니신가요?'}
-                        </a>
+                        </div>
                     </p>
                 </div>
             </div>
