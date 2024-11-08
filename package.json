@@ -29,7 +29,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "homepage": "https://hyunsolchoi.github.io/Maerchen/signin"
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
+    "homepage": "https://hyunsolchoi.github.io/Maerchen"
   },
   "eslintConfig": {
     "extends": [

@@ -4,7 +4,7 @@ import SignIn from './signIn/SignIn';
 function App() {
 
     return (
-        <Router>
+        <Router basename={process.env.PUBLIC_URL}>
             <Routes>
                 <Route path="/" element={<Navigate to="/signin" />} />
                 <Route path="/signin" element={<SignIn/>} />
