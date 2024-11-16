@@ -1,0 +1,232 @@
+/* src/home/Home.css */
+
+body, .home {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #141414;
+    color: white;
+}
+
+.navbar {
+    height: 70px;
+    display: flex;
+    align-items: center;
+    padding: 10px 30px;
+    background-color: #1f1f1f;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.navbar-logo {
+    color: red;
+    font-size: 2em;
+    margin-right: 40px;
+    margin-left: 5vh;
+}
+
+.navbar-logo:hover {
+    cursor: pointer;
+}
+
+.navbar-menu {
+    display: flex;
+    list-style: none;
+    font-size: 20px;
+    font-weight: 500;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-item {
+    margin-right: 20px;
+    cursor: pointer;
+}
+
+.navbar-item:hover {
+    text-decoration: underline;
+}
+
+.top-banner {
+    position: relative;
+    width: 100%;
+    height: 90vh; /* 배너 높이 조정 */
+    background-size: cover; /* 화면에 맞도록 이미지 확장 */
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    color: white;
+    padding: 20px;
+}
+
+.top-banner-content {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    bottom: 0;
+    left: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* 하단 정렬 */
+    align-items: flex-start; /* 좌측 정렬 */
+    background: rgba(0, 0, 0, 0.3); /* 약간의 투명 배경 */
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+.top-banner-title {
+    font-size: 2.5em;
+    padding-left: calc(2vh + 40px);
+    margin-bottom: 10px;
+}
+
+.top-banner-overview {
+    font-size: 1em;
+    max-width: 70vh;
+    text-align: justify;
+    padding-bottom: 40px;
+    padding-left: calc(2vh + 40px);
+}
+
+/* Movie Section */
+.movies-section {
+    margin-top: 20px;
+    padding: 0 20px;
+}
+
+.movies-section h2 {
+    margin-bottom: 15px;
+    font-size: 1.5em;
+    padding: 0 calc(2vh + 40px);
+}
+
+.movies-row {
+    display: flex;
+    gap: 15px;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden; /* 수평 스크롤 활성화 */
+    scroll-snap-type: x mandatory; /* 스냅 스크롤 적용 */
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch; /* 모바일 장치에서의 부드러운 스크롤 */
+}
+
+.movies-row-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px; /* 버튼과 영화 행 사이의 거리 */
+    padding: 0 10px;
+    overflow: hidden; /* 영화 행이 넘치지 않도록 설정 */
+}
+
+.movies-row::-webkit-scrollbar {
+    display: none;
+}
+
+.movie-card {
+    flex: 0 0 calc((100% - 15px * 5) / 6); /* 고정된 너비로 균등하게 표시 */
+    background-color: #222;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s;
+    scroll-snap-align: start; /* 각 카드가 스냅에 맞춰 정렬되도록 설정 */
+    cursor: pointer;
+}
+
+.movies-row.no-hover .movie-card {
+    pointer-events: none; /* 호버 비활성화 */
+}
+
+.movie-card:hover {
+    transform: scale(1.05);
+}
+
+.movie-poster {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.movies-row::-webkit-scrollbar {
+    display: none; /* 스크롤바 숨기기 */
+}
+.scroll-button {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    padding: 10px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.7); /* 기본 상태: 덜 밝은 흰색 */
+    transition: color 0.3s ease, background-color 0.3s ease; /* 부드러운 전환 */
+}
+
+.scroll-button.left {
+    margin-left: 2vh;
+}
+
+.scroll-button.right {
+    margin-right: 2vh; /* 오른쪽 버튼과 영화 행 사이에 여백 추가 */
+}
+
+.scroll-button.hidden {
+    visibility: hidden;
+}
+.scroll-button.show {
+    visibility: visible;
+}
+.scroll-button:hover {
+    background-color: rgba(0, 0, 0, 0.7); /* 호버 시 배경색 더 어둡게 */
+    color: rgba(255, 255, 255, 1); /* 호버 시 완전히 밝은 흰색 */
+}
+
+/* 기존 CSS 내용 위에 추가 */
+
+.user-icon {
+    position: relative;
+    color: white;
+    cursor: pointer;
+    font-size: 1.5rem;
+    margin-left: auto; /* Navbar 오른쪽 끝으로 이동 */
+    display: flex;
+    align-items: center;
+}
+
+.user-icon:hover {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #333;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    text-align: left;
+    min-width: 150px;
+}
+
+.dropdown-item {
+    color: white;
+    padding: 5px 10px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}

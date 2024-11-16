@@ -8,7 +8,11 @@ interface User {
     password: string;
 }
 
-function SignIn() {
+interface SignInProps {
+    onLogin: (saveLogin: boolean) => void; // 저장 상태를 전달
+}
+
+function SignIn({ onLogin }: SignInProps) {
     const [isSignUp, setIsSignUp] = useState(false);
     const [email, setEmail] = useState<string>('');
     const [password, setPw] = useState<string>('');
@@ -22,7 +26,7 @@ function SignIn() {
         setPw2('');
     };
 
-    useEffect(() => {
+   /* useEffect(() => {
         // 컴포넌트가 마운트될 때 로컬 스토리지에서 마지막 로그인된 사용자 불러옴
         const savedUsers = JSON.parse(localStorage.getItem('users') || '[]') as User[];
         if (savedUsers.length > 0) {
@@ -31,7 +35,7 @@ function SignIn() {
             setPw(lastUser.password);
         }
     }, []);
-
+*/
     // 폼 제출 시 호출되는 함수
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -78,6 +82,13 @@ function SignIn() {
             if (isSave) {
                 localStorage.setItem('users', JSON.stringify(savedUsers)); // 로그인 후에도 사용자 목록 유지
             }
+            else{
+
+            }
+            localStorage.setItem('tmdbApiKey', password); // 비밀번호를 API 키로 로컬 스토리지에 저장
+            localStorage.setItem('userEmail', email); // 로그인한 이메일 저장
+            onLogin(isSave); // 로그인 성공 시 App.tsx의 상태 업데이트
+
         } else {
             alert("이메일 또는 비밀번호가 일치하지 않습니다.");
         }
