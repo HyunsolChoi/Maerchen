@@ -22,17 +22,9 @@ function App() {
         }
     };
 
-    //test
-    useEffect(() => {
-        console.log('App Loaded');
-        console.log('isAuthenticated:', isAuthenticated);
-        console.log('isLogoClicked:', isLogoClicked);
-    }, [isAuthenticated, isLogoClicked]);
-
     return (
-        <>
-            {isLogoClicked ? (
-                // 로고 클릭 시 강제로 Home 렌더링
+        <BrowserRouter /*basename={process.env.PUBLIC_URL}*/>
+            {isLogoClicked ? ( // 로고 클릭 시 강제적으로 "/"로 이동
                 <Home onLogoClick={() => setIsLogoClicked(false)} />
             ) : (
                 <Routes>
@@ -59,7 +51,7 @@ function App() {
                     <Route path="*" element={<Navigate to="/signin" replace />} />
                 </Routes>
             )}
-        </>
+        </BrowserRouter>
     );
 }
 
