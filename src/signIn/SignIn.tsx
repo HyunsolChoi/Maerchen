@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState } from 'react';
 import './SignIn.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClapperboard } from '@fortawesome/free-solid-svg-icons';
