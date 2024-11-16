@@ -1,4 +1,4 @@
-import { Route, Routes, Navigate, BrowserRouter } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import SignIn from './signIn/SignIn';
 import Home from './home/Home';
 import { useEffect, useState } from 'react';
@@ -23,8 +23,9 @@ function App() {
     };
 
     return (
-        <BrowserRouter /*basename={process.env.PUBLIC_URL}*/>
-            {isLogoClicked ? ( // 로고 클릭 시 강제적으로 "/"로 이동
+        <>
+            {isLogoClicked ? (
+                // 로고 클릭 시 강제로 Home 렌더링
                 <Home onLogoClick={() => setIsLogoClicked(false)} />
             ) : (
                 <Routes>
@@ -51,7 +52,7 @@ function App() {
                     <Route path="*" element={<Navigate to="/signin" replace />} />
                 </Routes>
             )}
-        </BrowserRouter>
+        </>
     );
 }
 
