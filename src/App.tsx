@@ -23,6 +23,9 @@ function App() {
     };
 
     return (
+       /* <div>
+            <h2>hello world</h2>
+        </div>*/
         <BrowserRouter basename={process.env.PUBLIC_URL}>
             {isLogoClicked ? ( // 로고 클릭 시 강제적으로 "/"로 이동
                 <Home onLogoClick={() => setIsLogoClicked(false)} />
