@@ -104,17 +104,6 @@ body, .home {
     padding: 0 calc(2vh + 40px);
 }
 
-.movies-row {
-    display: flex;
-    gap: 15px;
-    padding: 0;
-    width: 100%;
-    overflow-x: hidden; /* 수평 스크롤 활성화 */
-    scroll-snap-type: x mandatory; /* 스냅 스크롤 적용 */
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch; /* 모바일 장치에서의 부드러운 스크롤 */
-}
-
 .movies-row-container {
     position: relative;
     display: flex;
@@ -122,40 +111,51 @@ body, .home {
     justify-content: space-between;
     gap: 20px; /* 버튼과 영화 행 사이의 거리 */
     padding: 0 10px;
-    overflow: hidden; /* 영화 행이 넘치지 않도록 설정 */
 }
 
-.movies-row::-webkit-scrollbar {
-    display: none;
-}
-
-.movie-card {
-    flex: 0 0 calc((100% - 15px * 5) / 6); /* 고정된 너비로 균등하게 표시 */
-    background-color: #222;
-    border-radius: 8px;
+.movies-row {
+    display: flex;
+    gap: 15px;
+    padding: 0;
+    width: 100%;
     overflow: hidden;
-    transition: transform 0.3s;
-    scroll-snap-align: start; /* 각 카드가 스냅에 맞춰 정렬되도록 설정 */
-    cursor: pointer;
+    position: relative; /* 자식 요소들의 기준이 되는 위치 */
+    scroll-snap-type: x mandatory; /* 스냅 스크롤 적용 */
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch; /* 모바일 장치에서의 부드러운 스크롤 */
+    transition: transform 0.5s ease; /* 부드러운 이동 모션 */
+    will-change: transform; /* 성능 최적화 */
 }
 
 .movies-row.no-hover .movie-card {
     pointer-events: none; /* 호버 비활성화 */
 }
 
-.movie-card:hover {
-    transform: scale(1.05);
+.movies-row::-webkit-scrollbar {
+    display: none; /* 스크롤바 숨기기 */
 }
 
+.movie-card {
+    flex: 0 0 calc((100% - 15px * 5) / 6); /* 카드 너비 균등 분배 */
+    background-color: #222;
+    border-radius: 8px;
+    transition: transform 0.3s ease, z-index 0.3s ease; /* 부드러운 확대 효과 */
+    scroll-snap-align: start; /* 각 카드가 스냅에 맞춰 정렬되도록 설정 */
+    position: relative; /* 부모 레이아웃과 독립 */
+    z-index: 1; /* 기본 z-index */
+    cursor: pointer;
+}
+
+.movie-card:hover {
+    transform: scale(1.05); /* x축은 그대로, y축만 확대 */
+    z-index: 5; /* 확대된 카드가 위로 올라오도록 설정 */
+}
 .movie-poster {
     width: 100%;
     height: auto;
     display: block;
 }
 
-.movies-row::-webkit-scrollbar {
-    display: none; /* 스크롤바 숨기기 */
-}
 .scroll-button {
     background-color: rgba(0, 0, 0, 0.5);
     color: white;
@@ -168,17 +168,7 @@ body, .home {
     align-items: center;
     justify-content: center;
     color: rgba(255, 255, 255, 0.7); /* 기본 상태: 덜 밝은 흰색 */
-    transition: color 0.3s ease, background-color 0.3s ease; /* 부드러운 전환 */
 }
-
-.scroll-button.left {
-    margin-left: 2vh;
-}
-
-.scroll-button.right {
-    margin-right: 2vh; /* 오른쪽 버튼과 영화 행 사이에 여백 추가 */
-}
-
 .scroll-button.hidden {
     visibility: hidden;
 }
@@ -190,16 +180,16 @@ body, .home {
     color: rgba(255, 255, 255, 1); /* 호버 시 완전히 밝은 흰색 */
 }
 
-/* 기존 CSS 내용 위에 추가 */
-
 .user-icon {
-    position: relative;
     color: white;
     cursor: pointer;
     font-size: 1.5rem;
-    margin-left: auto; /* Navbar 오른쪽 끝으로 이동 */
     display: flex;
     align-items: center;
+    position: absolute; /* 절대 위치로 설정 */
+    right: 5vh; /* 오른쪽에서 5vh 여백 */
+    top: 50%; /* 수직 중앙 정렬 */
+    transform: translateY(-50%); /* 정확한 수직 정렬 */
 }
 
 .user-icon:hover {
@@ -229,4 +219,92 @@ body, .home {
 
 .dropdown-item:hover {
     background-color: rgba(255, 255, 255, 0.1);
+}
+
+.navbar-mobile-toggle {
+    display: none; /* 기본적으로 숨김 */
+}
+
+/* 모바일 환경 반응형 CSS */
+@media (max-width: 768px) {
+    .user-icon {
+        position: relative; /* 기본 위치로 복구 */
+        margin-left: auto; /* 오른쪽 끝으로 이동 */
+        margin-right: 0; /* 여백 제거 */
+        transform: none; /* transform 해제 */
+    }
+    .navbar-menu {
+        display: none; /* 기본적으로 숨김 */
+        position: absolute;
+        top: 70px;
+        right: 0;
+        background-color: #1f1f1f;
+        width: 100%;
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+        z-index: 1000;
+    }
+
+    .navbar-menu.show {
+        display: block; /* 토글 시 표시 */
+    }
+
+    .navbar-icons {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-left: auto;
+    }
+
+    .navbar-mobile-toggle {
+        display: block; /* 모바일에서는 표시 */
+        font-size: 1.5em;
+        color: white;
+        cursor: pointer;
+        margin-left: 2px; /* 간격 조정 */
+    }
+
+    /* 배너 관련 스타일 */
+    .top-banner {
+        height: 70vh; /* 모바일에서 배너 높이 조정 */
+    }
+
+    /* 섹션 관련 스타일 */
+    .movies-section h2 {
+        font-size: 1.2em; /* 모바일에서 제목 크기 조정 */
+    }
+
+    .movies-row-container {
+        padding: 0 5px; /* 좌우 끝 간격 좁힘 */
+    }
+
+    .movies-section h2 {
+        padding: 0 10px; /* 섹션 제목 간격 좁힘 */
+        font-size: 1.2em; /* 섹션 제목 크기 조정 */
+    }
+
+    .movie-card {
+        flex: 0 0 calc((100% - 12px * 4) / 4); /* 5개의 카드가 한 행에 나타나도록 조정 */
+    }
+
+    .top-banner-title {
+        font-size: 1.8em; /* 기존보다 작게 설정 */
+        padding-left: 20px; /* 텍스트 시작 간격 조정 */
+        margin-bottom: 10px;
+    }
+
+    .top-banner-overview {
+        font-size: 0.9em; /* 설명 텍스트 크기 축소 */
+        max-width: 80vw; /* 배너 텍스트의 최대 너비 제한 */
+        text-align: justify;
+        padding-left: 20px; /* 좌측 여백 조정 */
+        padding-bottom: 20px; /* 하단 여백 축소 */
+    }
+    .scroll-button.left {
+        margin-left: 1vh;
+    }
+    .scroll-button.right {
+        margin-right: 1vh; /* 오른쪽 버튼과 영화 행 사이에 여백 추가 */
+    }
 }

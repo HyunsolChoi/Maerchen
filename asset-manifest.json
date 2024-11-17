@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/Maerchen/static/css/main.ba365195.css",
-    "main.js": "/Maerchen/static/js/main.b5e24a80.js",
-    "static/media/background.jpg": "/Maerchen/static/media/background.59a61dcd79d622bf54ae.jpg",
-    "index.html": "/Maerchen/index.html",
-    "main.ba365195.css.map": "/Maerchen/static/css/main.ba365195.css.map",
-    "main.b5e24a80.js.map": "/Maerchen/static/js/main.b5e24a80.js.map"
+    "main.css": "/static/css/main.ee2a2981.css",
+    "main.js": "/static/js/main.08b53923.js",
+    "static/media/background.jpg": "/static/media/background.59a61dcd79d622bf54ae.jpg",
+    "index.html": "/index.html",
+    "main.ee2a2981.css.map": "/static/css/main.ee2a2981.css.map",
+    "main.08b53923.js.map": "/static/js/main.08b53923.js.map"
   },
   "entrypoints": [
-    "static/css/main.ba365195.css",
-    "static/js/main.b5e24a80.js"
+    "static/css/main.ee2a2981.css",
+    "static/js/main.08b53923.js"
   ]
 }

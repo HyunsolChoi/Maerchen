@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClapperboard, faChevronLeft, faChevronRight, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faClapperboard, faChevronLeft, faChevronRight, faUser, faBars } from '@fortawesome/free-solid-svg-icons';
 import './Home.css';
 
 interface Movie {
@@ -28,6 +29,7 @@ const Home: React.FC<HomeProps> = ({ onLogoClick }) => {
     const [animationMovies, setAnimationMovies] = useState<Movie[]>([]);
     const [menuVisible, setMenuVisible] = useState(false);
     const [username, setUsername] = useState<string>('');
+    const navigate = useNavigate(); // useNavigate 선언
 
     const apiKey = localStorage.getItem('tmdbApiKey');
 
@@ -38,6 +40,7 @@ const Home: React.FC<HomeProps> = ({ onLogoClick }) => {
     const handleLogout = () => {
         localStorage.removeItem('isAuthenticated');
         localStorage.removeItem('userEmail'); // 저장된 이메일 삭제
+        localStorage.removeItem('tmdbApiKey'); // 저장 비밀번호 삭제
         window.location.reload();
     };
 
@@ -45,11 +48,13 @@ const Home: React.FC<HomeProps> = ({ onLogoClick }) => {
         setMenuVisible((prev) => !prev);
     };
 
+
     useEffect(() => {
         const storedEmail = localStorage.getItem('userEmail');
         if (storedEmail) {
             setUsername(storedEmail); // 이메일 상태 업데이트
         }
+
         const fetchMovies = async () => {
             try {
                 const top = await fetchMoviesByCategory(`https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=ko-KR`);
@@ -61,13 +66,20 @@ const Home: React.FC<HomeProps> = ({ onLogoClick }) => {
                 setPopularMovies(popular.slice(0, 20));
 
                 const latest = await fetchMoviesByCategory(`https://api.themoviedb.org/3/movie/now_playing?api_key=${apiKey}&language=ko-KR`);
-                setLatestMovies(latest.slice(0, 20));
+                const latest2 = await fetchMoviesByCategory(`https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&with_genres=28&language=ko-KR&page=2`);
+                //두번째 페이지도 가져와서 인기영화에 없는 영화만 업로드함
+                latest.push(...latest2);
+                const uniqueLatestMovies = latest.filter(
+                    (latestMovie) => !popular.some((popularMovie) => popularMovie.id === latestMovie.id)
+                );
+                setLatestMovies(uniqueLatestMovies.slice(0, 20));
 
                 const action = await fetchMoviesByCategory(`https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&with_genres=28&language=ko-KR`);
                 setActionMovies(action.slice(0, 20));
 
                 const animation = await fetchMoviesByCategory(`https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&with_genres=16&language=ko-KR`);
                 setAnimationMovies(animation.slice(0, 20));
+
             } catch (error) {
                 console.error("Error fetching movies:", error);
             }
@@ -91,8 +103,8 @@ const Home: React.FC<HomeProps> = ({ onLogoClick }) => {
                     onClick={handleLogoClick} // 핸들러 적용
                 />
                 <ul className="navbar-menu">
-                    <li className="navbar-item" onClick={handleLogoClick}>홈</li>
-                    <li className="navbar-item">대세 콘텐츠</li>
+                    <li className="navbar-item" onClick={() => navigate('Maerchen/')}>홈</li>
+                    <li className="navbar-item" onClick={() => navigate('Maerchen/popular')}>대세 콘텐츠</li>
                     <li className="navbar-item">찾아보기</li>
                     <li className="navbar-item">찜</li>
                 </ul>
@@ -161,7 +173,6 @@ const MovieSection = ({ title, movies }: { title: string; movies: Movie[] }) => 
 
             rowRef.current.scrollBy({
                 left: scrollAmount,
-                behavior: 'smooth',
             });
 
             // 스크롤이 완료된 후 호버 활성화
