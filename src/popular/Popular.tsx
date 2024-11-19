@@ -26,6 +26,7 @@ const Popular: React.FC<HomeProps> = ({ onLogout }) => {
         const data = await response.json();
         return data.results;
     };*/
+    //please
 
     return (
         <div className="home">
