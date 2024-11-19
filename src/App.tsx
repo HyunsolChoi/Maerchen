@@ -10,6 +10,7 @@ function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isLandscape, setIsLandscape] = useState(false);
 
+    //모바일 화면 고려를 위한 코드
     useEffect(() => {
         const detectOrientationAndDevice = () => {
             const isLandscapeMode = window.innerWidth > window.innerHeight;
