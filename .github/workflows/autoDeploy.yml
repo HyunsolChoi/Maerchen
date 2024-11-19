@@ -1,0 +1,38 @@
+name: autoDeploy
+
+# 실행 조건: Develop 브랜치에 푸시될 때 실행
+on:
+  push:
+    branches:
+      - Develop
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. 코드 체크아웃
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Node.js 환경 설정
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16 # Node.js 버전
+
+      # 3. 의존성 설치
+      - name: Install dependencies
+        run: npm install
+
+      # 4. 빌드 실행
+      - name: Build project
+        run: npm run build
+
+      # 5. gh-pages 브랜치로 배포
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }} # GitHub 제공 토큰
+          publish_dir: ./build # 빌드된 정적 파일 경로
+          force_orphan: true # gh-pages 브랜치를 비어있는 상태로 시작
