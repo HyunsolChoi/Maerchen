@@ -27,11 +27,11 @@ const Popular: React.FC<HomeProps> = ({ onLogout }) => {
 
     }, [apiKey]);
 
-    const fetchMoviesByCategory = async (url: string): Promise<Movie[]> => {
+   /* const fetchMoviesByCategory = async (url: string): Promise<Movie[]> => {
         const response = await fetch(url);
         const data = await response.json();
         return data.results;
-    };
+    };*/
 
     return (
         <div className="home">
