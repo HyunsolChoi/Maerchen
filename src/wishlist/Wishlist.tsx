@@ -34,6 +34,7 @@ const Wishlist: React.FC<HomeProps> = ({ onLogout }) => {
 
             if (screenWidth <= 1200) cols = 5;
             if (screenWidth <= 1000) cols = 4;
+            //모바일 일 때
             if (screenWidth <= 800) {
                 cols = 3; // 800px 이하일 때 3열
                 setMoviesPerPage(cols * 3); // 3행 고정
