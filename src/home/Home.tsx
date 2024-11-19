@@ -1,60 +1,44 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClapperboard, faChevronLeft, faChevronRight, faUser, faBars } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 import './Home.css';
+import Navbar from '../config/Navbar';
 
 interface Movie {
     id: number;
     title: string;
     poster_path: string;
+    backdrop_path: string;
     overview: string;
 }
-interface Movie {
-    id: number;
-    title: string;
-    poster_path: string;
-    backdrop_path: string; // backdrop 이미지 경로 추가
-    overview: string;
-}
+
 interface HomeProps {
-    onLogoClick: () => void;
+    onLogout: () => void;
 }
 
-const Home: React.FC<HomeProps> = ({ onLogoClick }) => {
+const Home: React.FC<HomeProps> = ({ onLogout }) => {
     const [topMovie, setTopMovie] = useState<Movie | null>(null);
     const [popularMovies, setPopularMovies] = useState<Movie[]>([]);
     const [latestMovies, setLatestMovies] = useState<Movie[]>([]);
     const [actionMovies, setActionMovies] = useState<Movie[]>([]);
     const [animationMovies, setAnimationMovies] = useState<Movie[]>([]);
-    const [menuVisible, setMenuVisible] = useState(false);
-    const [username, setUsername] = useState<string>('');
-    const navigate = useNavigate(); // useNavigate 선언
+
+    const username = localStorage.getItem('userEmail') || 'Guest';
+
+    // 찜 목록 상태 (wish)
+    const [wish, setWish] = useState<Movie[]>(() => {
+        const storedWish = localStorage.getItem(`${username}_wish`);
+        try {
+            return storedWish ? JSON.parse(storedWish) : []; // JSON 파싱
+        } catch {
+            return []; // 파싱 실패 시 빈 배열
+        }
+    });
 
     const apiKey = localStorage.getItem('tmdbApiKey');
 
-    const handleLogoClick = () => {
-        onLogoClick(); // 로고 클릭 상태 업데이트
-    };
-
-    const handleLogout = () => {
-        localStorage.removeItem('isAuthenticated');
-        localStorage.removeItem('userEmail'); // 저장된 이메일 삭제
-        localStorage.removeItem('tmdbApiKey'); // 저장 비밀번호 삭제
-        window.location.reload();
-    };
-
-    const toggleMenu = () => {
-        setMenuVisible((prev) => !prev);
-    };
-
-
     useEffect(() => {
-        const storedEmail = localStorage.getItem('userEmail');
-        if (storedEmail) {
-            setUsername(storedEmail); // 이메일 상태 업데이트
-        }
-
         const fetchMovies = async () => {
             try {
                 const top = await fetchMoviesByCategory(`https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=ko-KR`);
@@ -66,8 +50,7 @@ const Home: React.FC<HomeProps> = ({ onLogoClick }) => {
                 setPopularMovies(popular.slice(0, 20));
 
                 const latest = await fetchMoviesByCategory(`https://api.themoviedb.org/3/movie/now_playing?api_key=${apiKey}&language=ko-KR`);
-                const latest2 = await fetchMoviesByCategory(`https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&with_genres=28&language=ko-KR&page=2`);
-                //두번째 페이지도 가져와서 인기영화에 없는 영화만 업로드함
+                const latest2 = await fetchMoviesByCategory(`https://api.themoviedb.org/3/movie/now_playing?api_key=${apiKey}&language=ko-KR&page=2`);
                 latest.push(...latest2);
                 const uniqueLatestMovies = latest.filter(
                     (latestMovie) => !popular.some((popularMovie) => popularMovie.id === latestMovie.id)
@@ -79,9 +62,8 @@ const Home: React.FC<HomeProps> = ({ onLogoClick }) => {
 
                 const animation = await fetchMoviesByCategory(`https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&with_genres=16&language=ko-KR`);
                 setAnimationMovies(animation.slice(0, 20));
-
             } catch (error) {
-                console.error("Error fetching movies:", error);
+                console.error('Error fetching movies:', error);
             }
         };
 
@@ -94,36 +76,29 @@ const Home: React.FC<HomeProps> = ({ onLogoClick }) => {
         return data.results;
     };
 
+    // 찜 상태 토글: 영화 객체 추가/제거
+    const toggleWish = (movie: Movie) => {
+        const isMovieLiked = wish.some((likedMovie) => likedMovie.id === movie.id);
+        const updatedWish = isMovieLiked
+            ? wish.filter((likedMovie) => likedMovie.id !== movie.id) // 이미 찜한 경우 제거
+            : [
+                ...wish,
+                {
+                    id: movie.id,
+                    title: movie.title,
+                    poster_path: movie.poster_path,
+                    backdrop_path: movie.backdrop_path,
+                    overview: movie.overview,
+                },
+            ]; // 새로 추가
+
+        setWish(updatedWish); // 상태 업데이트
+        localStorage.setItem(`${username}_wish`, JSON.stringify(updatedWish)); // 로컬 스토리지에 저장
+    };
+
     return (
         <div className="home">
-            <nav className="navbar">
-                <FontAwesomeIcon
-                    icon={faClapperboard}
-                    className="navbar-logo"
-                    onClick={handleLogoClick} // 핸들러 적용
-                />
-                <ul className="navbar-menu">
-                    <li className="navbar-item" onClick={() => navigate('Maerchen/')}>홈</li>
-                    <li className="navbar-item" onClick={() => navigate('Maerchen/popular')}>대세 콘텐츠</li>
-                    <li className="navbar-item">찾아보기</li>
-                    <li className="navbar-item">찜</li>
-                </ul>
-                <div
-                    className="user-icon"
-                    onMouseEnter={toggleMenu}
-                    onMouseLeave={toggleMenu}
-                >
-                    <FontAwesomeIcon icon={faUser}/>
-                    {menuVisible && (
-                        <div className="dropdown-menu">
-                            <p className="dropdown-item">{username}</p>
-                            <p className="dropdown-item" onClick={handleLogout}>
-                                로그아웃
-                            </p>
-                        </div>
-                    )}
-                </div>
-            </nav>
+            <Navbar username={username} onLogout={onLogout} />
             {topMovie && (
                 <div
                     className="top-banner"
@@ -138,48 +113,47 @@ const Home: React.FC<HomeProps> = ({ onLogoClick }) => {
                 </div>
             )}
 
-            <MovieSection title="인기 영화" movies={popularMovies} />
-            <MovieSection title="최신 영화" movies={latestMovies} />
-            <MovieSection title="액션 영화" movies={actionMovies} />
-            <MovieSection title="애니메이션 영화" movies={animationMovies} />
+            <MovieSection title="인기 영화" movies={popularMovies} wish={wish} toggleWish={toggleWish} />
+            <MovieSection title="최신 영화" movies={latestMovies} wish={wish} toggleWish={toggleWish} />
+            <MovieSection title="액션 영화" movies={actionMovies} wish={wish} toggleWish={toggleWish} />
+            <MovieSection title="애니메이션 영화" movies={animationMovies} wish={wish} toggleWish={toggleWish} />
         </div>
     );
 };
 
-const MovieSection = ({ title, movies }: { title: string; movies: Movie[] }) => {
+const MovieSection = ({
+                          title,
+                          movies,
+                          wish,
+                          toggleWish,
+                      }: {
+    title: string;
+    movies: Movie[];
+    wish: Movie[]; // 찜한 영화 객체 배열
+    toggleWish: (movie: Movie) => void; // 영화 객체 전달
+}) => {
     const rowRef = useRef<HTMLDivElement>(null);
     const [scrolling, setScrolling] = useState(false);
-    const [isLeftHidden, setIsLeftHidden] = useState(true); // 초기: 좌 버튼 숨김
-    const [isRightHidden, setIsRightHidden] = useState(false); // 초기: 우 버튼 보임
+    const [isLeftHidden, setIsLeftHidden] = useState(true);
+    const [isRightHidden, setIsRightHidden] = useState(false);
 
     const checkScrollPosition = () => {
         if (rowRef.current) {
             const { scrollLeft, scrollWidth, clientWidth } = rowRef.current;
-            const roundedScrollLeft = Math.ceil(scrollLeft);
-            const roundedClientWidth = Math.floor(clientWidth);
-            const roundedScrollWidth = Math.floor(scrollWidth);
-
-            setIsLeftHidden(roundedScrollLeft === 0); // 스크롤이 가장 왼쪽인지 확인
-            setIsRightHidden(roundedScrollLeft + roundedClientWidth >= roundedScrollWidth); // 스크롤이 가장 오른쪽인지 확인
+            setIsLeftHidden(scrollLeft === 0);
+            setIsRightHidden(scrollLeft + clientWidth >= scrollWidth);
         }
     };
 
     const scroll = (direction: 'left' | 'right') => {
         if (rowRef.current) {
-
-            // 스크롤 시작 시 호버 비활성화
             setScrolling(true);
             const scrollAmount = direction === 'left' ? -rowRef.current.clientWidth : rowRef.current.clientWidth;
-
-            rowRef.current.scrollBy({
-                left: scrollAmount,
-            });
-
-            // 스크롤이 완료된 후 호버 활성화
+            rowRef.current.scrollBy({ left: scrollAmount });
             setTimeout(() => {
                 setScrolling(false);
-                checkScrollPosition(); // 위치 확인 후 버튼 상태 업데이트
-            }, 600); // 스크롤 완료까지 대기 시간 설정 (필요에 따라 조정 가능)
+                checkScrollPosition();
+            }, 600);
         }
     };
 
@@ -202,30 +176,33 @@ const MovieSection = ({ title, movies }: { title: string; movies: Movie[] }) => 
                 <div
                     className="scroll-button left"
                     onClick={() => scroll('left')}
-                    style={{visibility: isLeftHidden ? 'hidden' : 'visible'}}>
-                    <FontAwesomeIcon icon={faChevronLeft}/>
+                    style={{ visibility: isLeftHidden ? 'hidden' : 'visible' }}
+                >
+                    <FontAwesomeIcon icon={faChevronLeft} />
                 </div>
                 <div className={`movies-row ${scrolling ? 'no-hover' : ''}`} ref={rowRef}>
                     {movies.map((movie) => (
-                        <div key={movie.id} className="movie-card">
+                        <div key={movie.id} className="movie-card" onClick={() => toggleWish(movie)}>
                             <img
                                 src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                                 alt={movie.title}
                                 className="movie-poster"
                             />
+                            {wish.some((likedMovie) => likedMovie.id === movie.id) && (
+                                <i className="fa-solid fa-thumbs-up movie-liked-icon" />
+                            )}
                         </div>
                     ))}
                 </div>
                 <div
                     className="scroll-button right"
                     onClick={() => scroll('right')}
-                    style={{visibility: isRightHidden ? 'hidden' : 'visible'}}
+                    style={{ visibility: isRightHidden ? 'hidden' : 'visible' }}
                 >
-                    <FontAwesomeIcon icon={faChevronRight}/>
+                    <FontAwesomeIcon icon={faChevronRight} />
                 </div>
             </div>
         </div>
-
     );
 };
 

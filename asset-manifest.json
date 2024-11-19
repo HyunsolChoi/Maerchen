@@ -1,14 +1,22 @@
 {
   "files": {
-    "main.css": "/Maerchen/static/css/main.d19ebba6.css",
-    "main.js": "/Maerchen/static/js/main.08b53923.js",
+    "main.css": "/Maerchen/static/css/main.36531a85.css",
+    "main.js": "/Maerchen/static/js/main.17484a6e.js",
+    "static/media/fa-solid-900.ttf": "/Maerchen/static/media/fa-solid-900.07ed6d5fa32c1d54af0f.ttf",
+    "static/media/fa-brands-400.ttf": "/Maerchen/static/media/fa-brands-400.0ff70dcbf135d859ebf3.ttf",
+    "static/media/fa-solid-900.woff2": "/Maerchen/static/media/fa-solid-900.93f719f4d62bfa3e748c.woff2",
+    "static/media/fa-brands-400.woff2": "/Maerchen/static/media/fa-brands-400.bb8d5a145e22822103fb.woff2",
     "static/media/background.jpg": "/Maerchen/static/media/background.59a61dcd79d622bf54ae.jpg",
+    "static/media/fa-regular-400.ttf": "/Maerchen/static/media/fa-regular-400.17a6e1aebccdbaa39e78.ttf",
+    "static/media/fa-regular-400.woff2": "/Maerchen/static/media/fa-regular-400.bc3722686635b5f86132.woff2",
+    "static/media/fa-v4compatibility.ttf": "/Maerchen/static/media/fa-v4compatibility.0f6cb412603527bda691.ttf",
+    "static/media/fa-v4compatibility.woff2": "/Maerchen/static/media/fa-v4compatibility.6cfec8414be20e2c3426.woff2",
     "index.html": "/Maerchen/index.html",
-    "main.d19ebba6.css.map": "/Maerchen/static/css/main.d19ebba6.css.map",
-    "main.08b53923.js.map": "/Maerchen/static/js/main.08b53923.js.map"
+    "main.36531a85.css.map": "/Maerchen/static/css/main.36531a85.css.map",
+    "main.17484a6e.js.map": "/Maerchen/static/js/main.17484a6e.js.map"
   },
   "entrypoints": [
-    "static/css/main.d19ebba6.css",
-    "static/js/main.08b53923.js"
+    "static/css/main.36531a85.css",
+    "static/js/main.17484a6e.js"
   ]
 }
