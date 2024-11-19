@@ -2,12 +2,6 @@ import React, { useState, useEffect } from 'react';
 import './Popular.css';
 import Navbar from "../config/Navbar";
 
-interface Movie {
-    id: number;
-    title: string;
-    poster_path: string;
-    overview: string;
-}
 
 interface HomeProps {
     onLogout: () => void;
