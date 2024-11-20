@@ -1,7 +1,155 @@
-body, .home {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    background-color: #141414;
+.popular {
+    padding: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column; /* 수직 레이아웃 */
+    justify-content: flex-start; /* 콘텐츠 상단부터 배치 */
+    align-items: center;
+    min-height: 100vh; /* 화면 전체 높이를 차지 */
+    box-sizing: border-box;
+}
+
+/* 영화 카드 컨테이너 */
+.popular .movies-container {
+    display: grid; /* CSS Grid 사용 */
+    grid-template-columns: repeat(6, 150px); /* 반응형 열 구성 */
+    grid-template-rows: repeat(2, 260px); /* 2행, 제목 공간 포함 */
+    gap: 20px; /* 카드 간격 고정 */
+    justify-content: center; /* 중앙 정렬 */
+    width: auto; /* 콘텐츠 크기에 따라 자동 조정 */
+    max-width: 1200px; /* 최대 너비 제한 */
+    padding: 0; /* 좌우 여백 조정 */
+    margin-bottom: 20px; /* 버튼과의 간격 */
+}
+
+/* 반응형 설정 */
+@media (max-width: 1200px) {
+    .popular .movies-container {
+        grid-template-columns: repeat(5, 150px); /* 5열 */
+        padding: 0 20px; /* 좌우 여백 */
+    }
+}
+
+@media (max-width: 1000px) {
+    .popular .movies-container {
+        grid-template-columns: repeat(4, 150px); /* 4열 */
+        padding: 0 30px; /* 좌우 여백 */
+    }
+}
+
+/* 800px 이하: 3x3 레이아웃 */
+@media (max-width: 800px) {
+    .popular .movies-container {
+        grid-template-columns: repeat(3, 1fr); /* 3열 */
+        grid-template-rows: auto; /* 행 높이는 콘텐츠에 따라 조정 */
+        gap: 10px; /* 간격 축소 */
+        padding: 0 20px; /* 좌우 여백 */
+    }
+
+    .popular .movie-card {
+        width: 90px; /* 카드 너비 축소 */
+    }
+
+    .popular .movie-poster {
+        width: 100%; /* 카드에 맞게 조정 */
+        height: 120px; /* 줄어든 높이 */
+        object-fit: cover; /* 포스터 비율 유지 */
+        border-radius: 6px; /* 모서리 둥글기 줄임 */
+    }
+
+    .popular .movie-title {
+        font-size: 0.75em; /* 제목 텍스트 크기 축소 */
+        line-height: 1.2; /* 줄 간격 유지 */
+        max-height: 2.4em; /* 두 줄까지만 표시 */
+        margin: 5px 0 0; /* 간격 조정 */
+    }
+
+    .popular .like-icon {
+        top: 5px; /* 좋아요 아이콘 위치 조정 */
+        right: 5px; /* 아이콘 간격 조정 */
+        font-size: 16px; /* 아이콘 크기 축소 */
+    }
+}
+
+@media(max-width: 520px){
+    .popular .movies-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.popular .movie-card {
+    position: relative;
+    display: flex;
+    flex-direction: column; /* 포스터와 텍스트를 세로 배치 */
+    align-items: center; /* 중앙 정렬 */
+    width: 150px; /* 고정된 카드 크기 */
+    text-align: center;
+    background-color: transparent; /* 카드 배경 제거 */
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.popular .movie-card:hover {
+    transform: scale(1.05); /* 확대 효과 */
+}
+
+/* 영화 포스터 */
+.popular .movie-poster {
+    width: 100%; /* 카드의 너비에 맞춤 */
+    height: 225px; /* 줄어든 높이 */
+    object-fit: cover; /* 포스터 비율 유지 */
+    display: block;
+    border-radius: 8px; /* 모서리 둥글게 */
+}
+
+.popular .movie-title {
+    margin: 5px 0 0; /* 제목과 포스터 간 여백 */
+    font-size: 0.9em; /* 텍스트 크기 */
+    color: white; /* 텍스트 색상 */
+    text-align: center;
+    line-height: 1.2; /* 줄 간격 */
+    max-height: 2.4em; /* 두 줄까지만 표시 (1.2em × 2) */
+    overflow: hidden; /* 넘치는 텍스트 숨김 */
+    text-overflow: ellipsis; /* 말줄임표 추가 */
+    display: -webkit-box; /* Flexbox-like 동작 */
+    -webkit-line-clamp: 2; /* 두 줄로 제한 */
+    -webkit-box-orient: vertical; /* 수직 박스 배치 */
+}
+
+.movie-liked-icon {
+    font-size: 20px;
+    background: linear-gradient(to bottom, orange, red); /* 노랑 -> 빨강 */
+    -webkit-background-clip: text; /* 텍스트에만 그라데이션 적용 */
+    -webkit-text-fill-color: transparent; /* 텍스트 내부를 투명하게 처리 */
+}
+
+.pagination {
+    display: flex;
+    justify-content: center; /* 중앙 정렬 */
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px; /* 간격 줄임 */
+}
+
+.pagination-button {
+    background-color: #555;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.pagination-button:disabled {
+    background-color: #333;
+    cursor: not-allowed;
+}
+
+.pagination-info {
+    font-size: 1em;
     color: white;
 }
+

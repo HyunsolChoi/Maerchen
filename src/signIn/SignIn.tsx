@@ -2,11 +2,7 @@ import React, { useState } from 'react';
 import './SignIn.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClapperboard } from '@fortawesome/free-solid-svg-icons';
-
-interface User {
-    email: string;
-    password: string;
-}
+import { User } from '../config/interfaces';
 
 interface SignInProps {
     onLogin: (saveLogin: boolean) => void; // 저장 상태를 전달
@@ -26,16 +22,6 @@ function SignIn({ onLogin }: SignInProps) {
         setPw2('');
     };
 
-   /* useEffect(() => {
-        // 컴포넌트가 마운트될 때 로컬 스토리지에서 마지막 로그인된 사용자 불러옴
-        const savedUsers = JSON.parse(localStorage.getItem('users') || '[]') as User[];
-        if (savedUsers.length > 0) {
-            const lastUser = savedUsers[savedUsers.length - 1];
-            setEmail(lastUser.email);
-            setPw(lastUser.password);
-        }
-    }, []);
-*/
     // 폼 제출 시 호출되는 함수
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -78,15 +64,14 @@ function SignIn({ onLogin }: SignInProps) {
         }
 
         if (foundUser) {
-            alert("로그인 성공!");
-            if (isSave) {
-                localStorage.setItem('users', JSON.stringify(savedUsers)); // 로그인 후에도 사용자 목록 유지
-            }
-            else{
 
-            }
-            localStorage.setItem('tmdbApiKey', password); // 비밀번호를 API 키로 로컬 스토리지에 저장
-            localStorage.setItem('userEmail', email); // 로그인한 이메일 저장
+            //커스텀 카드 수정 필요
+            alert("로그인 성공!");
+
+            localStorage.setItem('users', JSON.stringify(savedUsers)); // 로그인 후에도 사용자 목록 유지
+
+            sessionStorage.setItem('sessionUserEmail', email);
+
             onLogin(isSave); // 로그인 성공 시 App.tsx의 상태 업데이트
 
         } else {

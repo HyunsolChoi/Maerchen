@@ -81,6 +81,11 @@ body {
     }
 }
 
+@media(max-width: 520px){
+    .wishlist .movies-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
 
 
 /* 영화 카드 */

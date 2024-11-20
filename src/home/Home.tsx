@@ -4,8 +4,9 @@ import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './Home.css';
 import Navbar from '../config/Navbar';
+import { User, Movie } from '../config/interfaces';
 
-interface Movie {
+interface BannerMovie{
     id: number;
     title: string;
     poster_path: string;
@@ -15,20 +16,32 @@ interface Movie {
 
 interface HomeProps {
     onLogout: () => void;
+    id: string;
 }
 
-const Home: React.FC<HomeProps> = ({ onLogout }) => {
-    const [topMovie, setTopMovie] = useState<Movie | null>(null);
-    const [popularMovies, setPopularMovies] = useState<Movie[]>([]);
-    const [latestMovies, setLatestMovies] = useState<Movie[]>([]);
-    const [actionMovies, setActionMovies] = useState<Movie[]>([]);
-    const [animationMovies, setAnimationMovies] = useState<Movie[]>([]);
+const Home: React.FC<HomeProps> = ({ onLogout, id }) => {
+    const [movieData, setMovieData] = useState<{
+        topMovie: BannerMovie | null;
+        popularMovies: Movie[];
+        latestMovies: Movie[];
+        actionMovies: Movie[];
+        animationMovies: Movie[];
+    }>({
+        topMovie: null,
+        popularMovies: [],
+        latestMovies: [],
+        actionMovies: [],
+        animationMovies: [],
+    });
 
-    const username = localStorage.getItem('userEmail') || 'Guest';
+
+    const savedUsers = JSON.parse(localStorage.getItem('users') || '[]') as User[];
+    const foundUser = savedUsers.find(user => user.email === id);
+    const API_KEY = foundUser?.password;
 
     // 찜 목록 상태 (wish)
     const [wish, setWish] = useState<Movie[]>(() => {
-        const storedWish = localStorage.getItem(`${username}_wish`);
+        const storedWish = localStorage.getItem(`${id}_wish`);
         try {
             return storedWish ? JSON.parse(storedWish) : []; // JSON 파싱
         } catch {
@@ -36,39 +49,49 @@ const Home: React.FC<HomeProps> = ({ onLogout }) => {
         }
     });
 
-    const apiKey = localStorage.getItem('tmdbApiKey');
-
     useEffect(() => {
         const fetchMovies = async () => {
             try {
-                const top = await fetchMoviesByCategory(`https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=ko-KR`);
-                if (top.length > 0) {
-                    setTopMovie(top[0]);
-                }
+                const [
+                    top,
+                    popular,
+                    latestPage1,
+                    latestPage2,
+                    action,
+                    animation,
+                ] = await Promise.all([
+                    fetchBannerMovie(`https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=ko-KR`),
+                    fetchMoviesByCategory(`https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=ko-KR`),
+                    fetchMoviesByCategory(`https://api.themoviedb.org/3/movie/now_playing?api_key=${API_KEY}&language=ko-KR`),
+                    fetchMoviesByCategory(`https://api.themoviedb.org/3/movie/now_playing?api_key=${API_KEY}&language=ko-KR&page=2`),
+                    fetchMoviesByCategory(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_genres=28&language=ko-KR`),
+                    fetchMoviesByCategory(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_genres=16&language=ko-KR`),
+                ]);
 
-                const popular = await fetchMoviesByCategory(`https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=ko-KR`);
-                setPopularMovies(popular.slice(0, 20));
-
-                const latest = await fetchMoviesByCategory(`https://api.themoviedb.org/3/movie/now_playing?api_key=${apiKey}&language=ko-KR`);
-                const latest2 = await fetchMoviesByCategory(`https://api.themoviedb.org/3/movie/now_playing?api_key=${apiKey}&language=ko-KR&page=2`);
-                latest.push(...latest2);
-                const uniqueLatestMovies = latest.filter(
+                const uniqueLatestMovies = [...latestPage1, ...latestPage2].filter(
                     (latestMovie) => !popular.some((popularMovie) => popularMovie.id === latestMovie.id)
                 );
-                setLatestMovies(uniqueLatestMovies.slice(0, 20));
 
-                const action = await fetchMoviesByCategory(`https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&with_genres=28&language=ko-KR`);
-                setActionMovies(action.slice(0, 20));
-
-                const animation = await fetchMoviesByCategory(`https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&with_genres=16&language=ko-KR`);
-                setAnimationMovies(animation.slice(0, 20));
+                setMovieData({
+                    topMovie: top[0] || null,
+                    popularMovies: popular.slice(0, 20),
+                    latestMovies: uniqueLatestMovies.slice(0, 20),
+                    actionMovies: action.slice(0, 20),
+                    animationMovies: animation.slice(0, 20),
+                });
             } catch (error) {
                 console.error('Error fetching movies:', error);
             }
         };
-
         fetchMovies();
-    }, [apiKey]);
+    }, []);
+
+
+    const fetchBannerMovie= async (url: string): Promise<BannerMovie[]> => {
+        const response = await fetch(url);
+        const data = await response.json();
+        return data.results;
+    };
 
     const fetchMoviesByCategory = async (url: string): Promise<Movie[]> => {
         const response = await fetch(url);
@@ -87,36 +110,34 @@ const Home: React.FC<HomeProps> = ({ onLogout }) => {
                     id: movie.id,
                     title: movie.title,
                     poster_path: movie.poster_path,
-                    backdrop_path: movie.backdrop_path,
-                    overview: movie.overview,
                 },
             ]; // 새로 추가
 
         setWish(updatedWish); // 상태 업데이트
-        localStorage.setItem(`${username}_wish`, JSON.stringify(updatedWish)); // 로컬 스토리지에 저장
+        localStorage.setItem(`${id}_wish`, JSON.stringify(updatedWish)); // 로컬 스토리지에 저장
     };
 
     return (
         <div className="home">
-            <Navbar username={username} onLogout={onLogout} />
-            {topMovie && (
+            <Navbar username={id} onLogout={onLogout} />
+            {movieData.topMovie && (
                 <div
                     className="top-banner"
                     style={{
-                        backgroundImage: `url(https://image.tmdb.org/t/p/original${topMovie.backdrop_path})`,
+                        backgroundImage: `url(https://image.tmdb.org/t/p/original${movieData.topMovie?.backdrop_path})`,
                     }}
                 >
                     <div className="top-banner-content">
-                        <h1 className="top-banner-title">{topMovie.title}</h1>
-                        <p className="top-banner-overview">{topMovie.overview}</p>
+                        <h1 className="top-banner-title">{movieData.topMovie?.title}</h1>
+                        <p className="top-banner-overview">{movieData.topMovie?.overview}</p>
                     </div>
                 </div>
             )}
 
-            <MovieSection title="인기 영화" movies={popularMovies} wish={wish} toggleWish={toggleWish} />
-            <MovieSection title="최신 영화" movies={latestMovies} wish={wish} toggleWish={toggleWish} />
-            <MovieSection title="액션 영화" movies={actionMovies} wish={wish} toggleWish={toggleWish} />
-            <MovieSection title="애니메이션 영화" movies={animationMovies} wish={wish} toggleWish={toggleWish} />
+            <MovieSection title="인기 영화" movies={movieData.popularMovies} wish={wish} toggleWish={toggleWish}/>
+            <MovieSection title="최신 영화" movies={movieData.latestMovies} wish={wish} toggleWish={toggleWish}/>
+            <MovieSection title="액션 영화" movies={movieData.actionMovies} wish={wish} toggleWish={toggleWish}/>
+            <MovieSection title="애니메이션 영화" movies={movieData.animationMovies} wish={wish} toggleWish={toggleWish}/>
         </div>
     );
 };
@@ -181,8 +202,8 @@ const MovieSection = ({
                     <FontAwesomeIcon icon={faChevronLeft} />
                 </div>
                 <div className={`movies-row ${scrolling ? 'no-hover' : ''}`} ref={rowRef}>
-                    {movies.map((movie) => (
-                        <div key={movie.id} className="movie-card" onClick={() => toggleWish(movie)}>
+                    {movies.map((movie, index) => (
+                        <div key={`${movie.id}-${index}`} className="movie-card" onClick={() => toggleWish(movie)}>
                             <img
                                 src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                                 alt={movie.title}

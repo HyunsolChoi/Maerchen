@@ -18,6 +18,7 @@ body, .home {
     justify-content: center;
     color: white;
     padding: 20px;
+    margin-bottom: 10px;
 }
 
 .top-banner-content {
@@ -52,7 +53,8 @@ body, .home {
 
 /* Movie Section */
 .movies-section {
-    margin-top: 20px;
+    margin-top: 7vh;
+    margin-bottom: 10px;
     padding: 0 20px;
 }
 
@@ -68,7 +70,7 @@ body, .home {
     align-items: center;
     justify-content: space-between;
     gap: 20px; /* 버튼과 영화 행 사이의 거리 */
-    padding: 0 10px;
+    padding: 0 0;
 }
 
 .movies-row {
@@ -190,50 +192,23 @@ body, .home {
         color: rgba(255, 255, 255, 0.8);
     }
 
-    .navbar-menu {
-        display: none; /* 기본적으로 숨김 */
-        position: absolute;
-        top: 70px;
-        right: 0;
-        background-color: #1f1f1f;
-        width: 100%;
-        flex-direction: column;
-        gap: 10px;
-        padding: 10px;
-        z-index: 1000;
-    }
-
-    .navbar-menu.show {
-        display: block; /* 토글 시 표시 */
-    }
-
-    .navbar-icons {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-left: auto;
-    }
-
-    .navbar-mobile-toggle {
-        display: block; /* 모바일에서는 표시 */
-        font-size: 1.5em;
-        color: white;
-        cursor: pointer;
-        margin-left: 2px; /* 간격 조정 */
-    }
-
     /* 배너 관련 스타일 */
     .top-banner {
         height: 70vh; /* 모바일에서 배너 높이 조정 */
     }
 
+    .movies-section {
+        margin-top: 20px;
+        margin-bottom: 10px;
+        padding: 0 0;
+    }
     /* 섹션 관련 스타일 */
     .movies-section h2 {
         font-size: 1.2em; /* 모바일에서 제목 크기 조정 */
     }
 
     .movies-row-container {
-        padding: 0 5px; /* 좌우 끝 간격 좁힘 */
+        padding: 0 0; /* 좌우 끝 간격 좁힘 */
     }
 
     .movies-section h2 {
@@ -242,7 +217,13 @@ body, .home {
     }
 
     .movie-card {
-        flex: 0 0 calc((100% - 12px * 4) / 4); /* 5개의 카드가 한 행에 나타나도록 조정 */
+        flex: 0 0 calc((100% - 12px * 2) / 2); /* 4개의 카드가 한 행에 나타나도록 조정 */
+    }
+
+    .movie-poster {
+        width: 100%;
+        height: auto;
+        display: block;
     }
 
     .top-banner-title {

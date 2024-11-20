@@ -1,4 +1,4 @@
-import { Route, Routes, Navigate, HashRouter } from 'react-router-dom';
+import {Route, Routes, Navigate, HashRouter} from 'react-router-dom';
 import SignIn from './signIn/SignIn';
 import Home from './home/Home';
 import Popular from './popular/Popular';
@@ -7,12 +7,29 @@ import { useEffect, useState } from 'react';
 import './index.css'
 
 function App() {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    //세션에 저장된 정보로 인증
+    const [sessionToken, setSessionToken] = useState(false);
+    //saveLogin 체크 시 로컬 스토리지에 인증 정보 저장
+    const [isSaveLogin, setIsSaveLogin] = useState(false);
     const [isLandscape, setIsLandscape] = useState(false);
+    const [username, setUsername] = useState<string>('Guest');
 
-    //모바일 화면 고려를 위한 코드
+    const isAuthenticated = sessionToken || isSaveLogin;
+
     useEffect(() => {
-        const detectOrientationAndDevice = () => {
+        const localEmail = localStorage.getItem('localUserEmail');
+        const sessionEmail = sessionStorage.getItem('sessionUserEmail');
+
+        if (localEmail) {
+            setUsername(localEmail);
+            setIsSaveLogin(true);
+        } else if (sessionEmail) {
+            setUsername(sessionEmail);
+            setSessionToken(true);
+        }
+
+        //모바일 가로 화면에서 비활성화시킴
+        /*const detectOrientationAndDevice = () => {
             const isLandscapeMode = window.innerWidth > window.innerHeight;
             const isMobileDevice =
                 /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
@@ -27,22 +44,24 @@ function App() {
 
         return () => {
             window.removeEventListener("resize", detectOrientationAndDevice);
-        };
+        };*/
     }, []);
 
     const handleLogin = (saveLogin: boolean) => {
-        setIsAuthenticated(true);
+        //signin에서 세션에 저장하므로 handleLogin 실행 시 세션에 이메일 저장되어있음.
+        setSessionToken(true);
+       // setIsSaveLogin(true);
         if (saveLogin) {
-            localStorage.setItem('isAuthenticated', 'true');
+            //console.log(username);
+            localStorage.setItem('localUserEmail',username);
         }
     };
 
     const handleLogout = () => {
-        setIsAuthenticated(false);
-        localStorage.removeItem('isAuthenticated');
-        localStorage.removeItem('userEmail'); // 저장된 이메일 삭제
-        localStorage.removeItem('tmdbApiKey'); // 저장 비밀번호 삭제
-        window.location.reload();
+        setSessionToken(false);
+        sessionStorage.removeItem('sessionUserEmail');
+        localStorage.removeItem('localUserEmail'); // 저장된 이메일 삭제, 토큰 삭제와 같음
+        window.location.replace('/#/signin');
     };
 
     return (
@@ -58,8 +77,8 @@ function App() {
                             path="/"
                             element={
                                 isAuthenticated ? (
-                                    <Home onLogout={handleLogout}/>
-                                ) : (
+                                    <Home onLogout={handleLogout} id={username}/>
+                            ) : (
                                     <Navigate to="/signin" replace />
                                 )
                             }
@@ -68,8 +87,8 @@ function App() {
                             path="/popular"
                             element={
                                 isAuthenticated ? (
-                                    <Popular onLogout={handleLogout}/>
-                                ) : (
+                                    <Popular onLogout={handleLogout} id={username}/>
+                            ) : (
                                     <Navigate to="/signin" replace />
                                 )
                             }
@@ -78,8 +97,8 @@ function App() {
                             path="/wishlist"
                             element={
                                 isAuthenticated ? (
-                                    <Wishlist onLogout={handleLogout}/>
-                                ) : (
+                                    <Wishlist onLogout={handleLogout} id={username}/>
+                            ) : (
                                     <Navigate to="/signin" replace />
                                 )
                             }
@@ -94,7 +113,7 @@ function App() {
                                 )
                             }
                         />
-                        <Route path="*" element={<Navigate to="/" replace />} />
+                        <Route path="*" element={<Navigate to="/signin" replace />} />
                     </Routes>
                 </HashRouter>
             )}
