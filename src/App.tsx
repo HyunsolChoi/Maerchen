@@ -50,9 +50,8 @@ function App() {
     const handleLogin = (saveLogin: boolean) => {
         //signin에서 세션에 저장하므로 handleLogin 실행 시 세션에 이메일 저장되어있음.
         setSessionToken(true);
-       // setIsSaveLogin(true);
         if (saveLogin) {
-            //console.log(username);
+            setIsSaveLogin(true);
             localStorage.setItem('localUserEmail',username);
         }
     };
