@@ -44,7 +44,7 @@ const Wishlist: React.FC<HomeProps> = ({ onLogout, id }) => {
         return () => {
             window.removeEventListener("resize", updateMoviesPerPage); // 이벤트 리스너 정리
         };
-    }, []);
+    }, [id]);
 
     // 로컬 스토리지에서 영화 데이터를 가져오기
     const loadWishlistMovies = (email: string) => {

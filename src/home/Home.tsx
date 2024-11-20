@@ -84,7 +84,7 @@ const Home: React.FC<HomeProps> = ({ onLogout, id }) => {
             }
         };
         fetchMovies();
-    }, []);
+    }, [API_KEY]);
 
 
     const fetchBannerMovie= async (url: string): Promise<BannerMovie[]> => {

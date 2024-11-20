@@ -11,7 +11,7 @@ function App() {
     const [sessionToken, setSessionToken] = useState(false);
     //saveLogin 체크 시 로컬 스토리지에 인증 정보 저장
     const [isSaveLogin, setIsSaveLogin] = useState(false);
-    const [isLandscape, setIsLandscape] = useState(false);
+    //const [isLandscape, setIsLandscape] = useState(false);
     const [username, setUsername] = useState<string>('Guest');
 
     const isAuthenticated = sessionToken || isSaveLogin;
@@ -65,11 +65,11 @@ function App() {
 
     return (
         <div>
-            {isLandscape ? (
+           {/* {isLandscape ? (
                 <div className="landscape-warning">
                     모바일에서는 세로 모드로만 사용 가능합니다.
                 </div>
-            ) : (
+            ) : (*/}
                 <HashRouter>
                     <Routes>
                         <Route
@@ -115,7 +115,7 @@ function App() {
                         <Route path="*" element={<Navigate to="/signin" replace />} />
                     </Routes>
                 </HashRouter>
-            )}
+           {/* )}*/}
         </div>
 
     );
