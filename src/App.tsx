@@ -1,4 +1,4 @@
-import {Route, Routes, Navigate, HashRouter} from 'react-router-dom';
+import {Route, Routes, Navigate, HashRouter, BrowserRouter} from 'react-router-dom';
 import SignIn from './signIn/SignIn';
 import Home from './home/Home';
 import Popular from './popular/Popular';
@@ -53,7 +53,7 @@ function App() {
         sessionStorage.removeItem('sessionUserEmail');
         localStorage.removeItem('localUserEmail'); // 저장된 이메일 삭제, 토큰 삭제와 같음
         setUsername('Guest');
-       // window.location.reload();
+        window.location.reload();
     };
 
     const handleLogin = (saveLogin: boolean) => {
@@ -84,7 +84,7 @@ function App() {
                     모바일에서는 세로 모드로만 사용 가능합니다.
                 </div>
             ) : (
-                <HashRouter>
+                <BrowserRouter basename="/Maerchen">
                     <Navbar username={username} onLogout={handleLogout} forceRerender={forceRerender}/>
                     <Routes>
                         <Route
@@ -129,7 +129,7 @@ function App() {
                         />
                         <Route path="*" element={<Navigate to="/signin" replace/>}/>
                     </Routes>
-                </HashRouter>
+                </BrowserRouter>
             )}
         </div>
 
