@@ -11,12 +11,10 @@ function App() {
     //세션에 저장된 정보로 인증
     const [sessionToken, setSessionToken] = useState(false);
     //saveLogin 체크 시 로컬 스토리지에 인증 정보 저장
-    const [isSaveLogin, setIsSaveLogin] = useState(false);
+    const [localToken, setLocalToken] = useState(false);
     const [isLandscape, setIsLandscape] = useState(false);
     const [username, setUsername] = useState<string>('Guest');
     const [key, setKey] = useState(0);
-
-    const isAuthenticated = sessionToken || isSaveLogin;
 
     useEffect(() => {
         const localEmail = localStorage.getItem('localUserEmail');
@@ -24,7 +22,7 @@ function App() {
 
         if (localEmail) {
             setUsername(localEmail);
-            setIsSaveLogin(true);
+            setLocalToken(true);
         } else if (sessionEmail) {
             setUsername(sessionEmail);
             setSessionToken(true);
@@ -51,10 +49,11 @@ function App() {
 
     const handleLogout = () => {
         setSessionToken(false);
-        setIsSaveLogin(false);
+        setLocalToken(false);
         sessionStorage.removeItem('sessionUserEmail');
         localStorage.removeItem('localUserEmail'); // 저장된 이메일 삭제, 토큰 삭제와 같음
-        window.location.replace('/signin');
+        setUsername('Guest');
+       // window.location.reload();
     };
 
     const handleLogin = (saveLogin: boolean) => {
@@ -63,14 +62,14 @@ function App() {
         if(tmp){
             setUsername(tmp);
             setSessionToken(true);
+
+            if (saveLogin) {
+                setLocalToken(true);
+                localStorage.setItem('localUserEmail',tmp);
+            }
         } else {
             console.error("Login Error");
             handleLogout();
-        }
-
-        if (saveLogin) {
-            setIsSaveLogin(true);
-            localStorage.setItem('localUserEmail',username);
         }
     };
 
@@ -91,44 +90,44 @@ function App() {
                         <Route
                             path="/"
                             element={
-                                isAuthenticated ? (
+                                sessionToken || localToken ? (
                                     <Home id={username} key={key}/>
-                            ) : (
-                                    <Navigate to="/signin" replace />
+                                ) : (
+                                    <Navigate to="/signin" replace/>
                                 )
                             }
                         />
                         <Route
                             path="/popular"
                             element={
-                                isAuthenticated ? (
+                                sessionToken || localToken ? (
                                     <Popular id={username} key={key}/>
-                            ) : (
-                                    <Navigate to="/signin" replace />
+                                ) : (
+                                    <Navigate to="/signin" replace/>
                                 )
                             }
                         />
                         <Route
                             path="/wishlist"
                             element={
-                                isAuthenticated ? (
+                                sessionToken || localToken ? (
                                     <Wishlist id={username} key={key}/>
-                            ) : (
-                                    <Navigate to="/signin" replace />
+                                ) : (
+                                    <Navigate to="/signin" replace/>
                                 )
                             }
                         />
                         <Route
                             path="/signin"
                             element={
-                                isAuthenticated ? (
-                                    <Navigate to="/" replace />
+                                sessionToken || localToken ? (
+                                    <Navigate to="/" replace/>
                                 ) : (
-                                    <SignIn onLogin={handleLogin} />
+                                    <SignIn onLogin={handleLogin}/>
                                 )
                             }
                         />
-                        <Route path="*" element={<Navigate to="/signin" replace />} />
+                        <Route path="*" element={<Navigate to="/signin" replace/>}/>
                     </Routes>
                 </HashRouter>
             )}
