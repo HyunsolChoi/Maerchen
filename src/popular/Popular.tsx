@@ -43,6 +43,7 @@ const Popular: React.FC<HomeProps> = ({ id }) => {
             setCurrentPage(1); // 페이지를 1로 초기화
             loadInitialMovies();
         }
+        // eslint-disable-next-line
     }, [viewMode]);
 
     // 무한 스크롤 이벤트 등록/해제
@@ -56,6 +57,7 @@ const Popular: React.FC<HomeProps> = ({ id }) => {
         return () => {
             window.removeEventListener("scroll", debouncedHandleScroll); // 항상 이벤트 제거
         };
+        // eslint-disable-next-line
     }, [viewMode, isFetching, currentPage]);
 
     useEffect(() => {
