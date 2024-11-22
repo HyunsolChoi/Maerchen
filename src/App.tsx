@@ -54,7 +54,7 @@ function App() {
         setIsSaveLogin(false);
         sessionStorage.removeItem('sessionUserEmail');
         localStorage.removeItem('localUserEmail'); // 저장된 이메일 삭제, 토큰 삭제와 같음
-        window.location.replace('/#/signin');
+        window.location.replace('/signin');
     };
 
     const handleLogin = (saveLogin: boolean) => {
