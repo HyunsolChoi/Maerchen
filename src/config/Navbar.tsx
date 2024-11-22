@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClapperboard, faUser, faBars } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -7,34 +7,22 @@ import './Navbar.css';
 interface NavbarProps {
     username: string;
     onLogout: () => void;
+    forceRerender: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ username, onLogout }) => {
+const Navbar: React.FC<NavbarProps> = ({ username, onLogout, forceRerender }) => {
     const [menuVisible, setMenuVisible] = useState(false);
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
 
-    const handleHomeNavigate = () => {
-        if (location.pathname === '/') {
-            navigate('dsds');
+    const handleNavigate = (path: string) => {
+        if (location.pathname === path) {
+            forceRerender(); // 동일 경로일 때 리렌더링 강제
         } else {
-            navigate('/');
+            navigate(path); // 경로 변경
         }
-    };
-    const handlePopularNavigate = () => {
-        if (location.pathname === '/popular') {
-            window.location.reload();
-        } else {
-            navigate('/popular');
-        }
-    };
-    const handleWishlistNavigate = () => {
-        if (location.pathname === '/wishlist') {
-            window.location.reload();
-        } else {
-            navigate('/wishlist');
-        }
+        window.scrollTo(0, 0); // 스크롤 위치를 상단으로 초기화
     };
 
     const toggleMenu = () => {
@@ -51,18 +39,22 @@ const Navbar: React.FC<NavbarProps> = ({ username, onLogout }) => {
         });
     };
 
+    if (location.pathname === "/signin") {
+        return null; // Navbar 비활성화
+    }
+
     return (
         <nav className="navbar">
             <FontAwesomeIcon
                 icon={faClapperboard}
                 className="navbar-logo"
-                onClick={handleHomeNavigate}
+                onClick={() => handleNavigate("/")}
             />
             <ul className="navbar-menu">
-                <li className="navbar-item" onClick={handleHomeNavigate}>홈</li>
-                <li className="navbar-item" onClick={handlePopularNavigate}>대세 콘텐츠</li>
+                <li className="navbar-item" onClick={() => handleNavigate("/")}>홈</li>
+                <li className="navbar-item" onClick={() => handleNavigate("/popular")}>대세 콘텐츠</li>
                 <li className="navbar-item">찾아보기</li>
-                <li className="navbar-item" onClick={handleWishlistNavigate}>찜</li>
+                <li className="navbar-item" onClick={() => handleNavigate("/wishlist")}>찜</li>
             </ul>
             <div className="user-icon" onClick={toggleDropdown}>
                 <FontAwesomeIcon icon={faUser} />
@@ -77,10 +69,10 @@ const Navbar: React.FC<NavbarProps> = ({ username, onLogout }) => {
                 <FontAwesomeIcon icon={faBars} />
                 {menuVisible && (
                     <div className="dropdown-menu">
-                        <p className="dropdown-item" onClick={handleHomeNavigate}>홈</p>
-                        <p className="dropdown-item" onClick={handlePopularNavigate}>대세 콘텐츠</p>
+                        <p className="dropdown-item" onClick={() => handleNavigate("/")}>홈</p>
+                        <p className="dropdown-item" onClick={() => handleNavigate("/popular")}>대세 콘텐츠</p>
                         <p className="dropdown-item">찾아보기</p>
-                        <p className="dropdown-item" onClick={handleWishlistNavigate}>찜</p>
+                        <p className="dropdown-item" onClick={() => handleNavigate("/wishlist")}>찜</p>
                     </div>
                 )}
             </div>

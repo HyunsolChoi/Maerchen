@@ -137,9 +137,9 @@ function SignIn({ onLogin }: SignInProps) {
                 )}
                 <div className="options">
                     <p>
-                        <div onClick={toggleSignUp} className="link">
+                        <span onClick={toggleSignUp} className="link">
                             {isSignUp ? '이미 회원이신가요?' : '회원이 아니신가요?'}
-                        </div>
+                        </span>
                     </p>
                 </div>
             </div>

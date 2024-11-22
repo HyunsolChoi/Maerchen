@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './Home.css';
-import Navbar from '../config/Navbar';
 import { User, Movie } from '../config/interfaces';
 
 interface BannerMovie{
@@ -15,11 +14,10 @@ interface BannerMovie{
 }
 
 interface HomeProps {
-    onLogout: () => void;
     id: string;
 }
 
-const Home: React.FC<HomeProps> = ({ onLogout, id }) => {
+const Home: React.FC<HomeProps> = ({ id }) => {
     const [movieData, setMovieData] = useState<{
         topMovie: BannerMovie | null;
         popularMovies: Movie[];
@@ -34,11 +32,6 @@ const Home: React.FC<HomeProps> = ({ onLogout, id }) => {
         animationMovies: [],
     });
 
-
-    const savedUsers = JSON.parse(localStorage.getItem('users') || '[]') as User[];
-    const foundUser = savedUsers.find(user => user.email === id);
-    const API_KEY = foundUser?.password;
-
     // 찜 목록 상태 (wish)
     const [wish, setWish] = useState<Movie[]>(() => {
         const storedWish = localStorage.getItem(`${id}_wish`);
@@ -49,7 +42,16 @@ const Home: React.FC<HomeProps> = ({ onLogout, id }) => {
         }
     });
 
+    const savedUsers = JSON.parse(localStorage.getItem('users') || '[]') as User[];
+    const foundUser = savedUsers.find(user => user.email === id);
+    const API_KEY = foundUser?.password;
+
     useEffect(() => {
+        if(!API_KEY) {
+            console.error("Error: API_KEY not found");
+            window.location.replace('/#/signin');
+            return;
+        }
         const fetchMovies = async () => {
             try {
                 const [
@@ -119,7 +121,6 @@ const Home: React.FC<HomeProps> = ({ onLogout, id }) => {
 
     return (
         <div className="home">
-            <Navbar username={id} onLogout={onLogout} />
             {movieData.topMovie && (
                 <div
                     className="top-banner"

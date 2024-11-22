@@ -1,50 +1,70 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./Wishlist.css";
-import Navbar from "../config/Navbar";
 import { Movie } from "../config/interfaces"
 
 interface HomeProps {
-    onLogout: () => void;
     id: string;
 }
 
-const Wishlist: React.FC<HomeProps> = ({ onLogout, id }) => {
+const Wishlist: React.FC<HomeProps> = ({ id }) => {
     const [wishlistMovies, setWishlistMovies] = useState<Movie[]>([]); // 로컬에서 가져온 영화 저장
     const [currentPage, setCurrentPage] = useState<number>(1); // 현재 페이지
     const [moviesPerPage, setMoviesPerPage] = useState<number>(12); // 페이지당 영화 수
+    const previousWidth = useRef<number>(window.innerWidth);
 
     useEffect(() => {
         loadWishlistMovies(id); // 로컬 스토리지에서 영화 데이터 로드
 
-        // 화면 크기에 따라 한 페이지의 영화 개수 설정
-        const updateMoviesPerPage = () => {
-            const screenWidth = window.innerWidth;
-            let cols = 6; // 기본 열 수
-
-            if (screenWidth <= 1200) cols = 5;
-            if (screenWidth <= 1000) cols = 4;
-
-            if(screenWidth <= 520) {
-                cols = 2;
-                setMoviesPerPage(cols *2);
-            }
-            else if (screenWidth <= 800) {
-                cols = 3; // 800px 이하일 때 3열
-                setMoviesPerPage(cols * 3); // 3행 고정
-            }
-            else {
-                setMoviesPerPage(cols * 2); // 기본 2행
-            }
-            setCurrentPage(1);
-        };
-
         updateMoviesPerPage(); // 초기 설정
+    }, [id]);
+
+    useEffect(() => {
+        updateMoviesPerPage();
+
         window.addEventListener("resize", updateMoviesPerPage); // 화면 크기 변경 감지
 
         return () => {
             window.removeEventListener("resize", updateMoviesPerPage); // 이벤트 리스너 정리
         };
-    }, [id]);
+    }, []);
+
+    // 화면 크기에 따라 한 페이지의 영화 개수 설정
+    const updateMoviesPerPage = () => {
+        const currentWidth = window.innerWidth;
+
+        const breakpoints = [520, 800, 1000, 1200];
+        if (
+            breakpoints.some(
+                (bp) =>
+                    (previousWidth.current < bp && currentWidth >= bp) || // breakpoint를 초과할 때
+                    (previousWidth.current >= bp && currentWidth < bp) || // breakpoint 아래로 갈 때
+                    currentWidth === bp // 화면이 정확히 해당 breakpoint일 때
+            )
+        ) {
+            setCurrentPage(1);
+        }
+
+        let cols = 6; // 기본 열 수
+
+        if(currentWidth <= 520) {
+            cols = 2;
+            setMoviesPerPage(cols *2);
+        } else if (currentWidth <= 800) {
+            cols = 3; // 800px 이하일 때 3열
+            setMoviesPerPage(cols * 3); // 3행 고정
+        } else if (currentWidth <= 1000) {
+            cols = 4;
+            setMoviesPerPage(cols * 2); // 기본 2행
+        } else if (currentWidth <= 1200){
+            cols = 5;
+            setMoviesPerPage(cols * 2); // 기본 2행
+        } else {
+            cols = 6;
+            setMoviesPerPage(cols * 2);
+        }
+
+        previousWidth.current = currentWidth;
+    };
 
     // 로컬 스토리지에서 영화 데이터를 가져오기
     const loadWishlistMovies = (email: string) => {
@@ -81,12 +101,10 @@ const Wishlist: React.FC<HomeProps> = ({ onLogout, id }) => {
         } else if (direction === "next" && currentPage < Math.ceil(wishlistMovies.length / moviesPerPage)) {
             setCurrentPage((prevPage) => prevPage + 1);
         }
-        console.log("changed");
     };
 
     return (
         <div>
-            <Navbar username={id} onLogout={onLogout}/>
             <div className="wishlist">
                 {wishlistMovies.length > 0 ? (
                     <>

@@ -22,61 +22,6 @@
     margin-bottom: 20px; /* 버튼과의 간격 */
 }
 
-/* 반응형 설정 */
-@media (max-width: 1200px) {
-    .popular .movies-container {
-        grid-template-columns: repeat(5, 150px); /* 5열 */
-        padding: 0 20px; /* 좌우 여백 */
-    }
-}
-
-@media (max-width: 1000px) {
-    .popular .movies-container {
-        grid-template-columns: repeat(4, 150px); /* 4열 */
-        padding: 0 30px; /* 좌우 여백 */
-    }
-}
-
-/* 800px 이하: 3x3 레이아웃 */
-@media (max-width: 800px) {
-    .popular .movies-container {
-        grid-template-columns: repeat(3, 1fr); /* 3열 */
-        grid-template-rows: auto; /* 행 높이는 콘텐츠에 따라 조정 */
-        gap: 10px; /* 간격 축소 */
-        padding: 0 20px; /* 좌우 여백 */
-    }
-
-    .popular .movie-card {
-        width: 90px; /* 카드 너비 축소 */
-    }
-
-    .popular .movie-poster {
-        width: 100%; /* 카드에 맞게 조정 */
-        height: 120px; /* 줄어든 높이 */
-        object-fit: cover; /* 포스터 비율 유지 */
-        border-radius: 6px; /* 모서리 둥글기 줄임 */
-    }
-
-    .popular .movie-title {
-        font-size: 0.75em; /* 제목 텍스트 크기 축소 */
-        line-height: 1.2; /* 줄 간격 유지 */
-        max-height: 2.4em; /* 두 줄까지만 표시 */
-        margin: 5px 0 0; /* 간격 조정 */
-    }
-
-    .popular .like-icon {
-        top: 5px; /* 좋아요 아이콘 위치 조정 */
-        right: 5px; /* 아이콘 간격 조정 */
-        font-size: 16px; /* 아이콘 크기 축소 */
-    }
-}
-
-@media(max-width: 520px){
-    .popular .movies-container {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
 .popular .movie-card {
     position: relative;
     display: flex;
@@ -98,7 +43,7 @@
 /* 영화 포스터 */
 .popular .movie-poster {
     width: 100%; /* 카드의 너비에 맞춤 */
-    height: 225px; /* 줄어든 높이 */
+    height: 225px;
     object-fit: cover; /* 포스터 비율 유지 */
     display: block;
     border-radius: 8px; /* 모서리 둥글게 */
@@ -153,3 +98,126 @@
     color: white;
 }
 
+/* 무한 view */
+
+/* View 전환 버튼 */
+.view-switcher {
+    position: fixed;
+    top: 80px; /* 위쪽으로 80px 마진 */
+    right: 30px; /* 화면 오른쪽에서 10px 떨어짐 */
+    z-index: 1000;
+    display: flex;
+    flex-direction: column; /* 버튼을 세로로 정렬 */
+    gap: 10px; /* 버튼 간의 간격 */
+    background-color: transparent; /* 배경 완전히 제거 */
+    padding: 0; /* 컨테이너 내부 여백 제거 */
+    border: none; /* 경계선 제거 */
+    box-shadow: none; /* 그림자 제거 */
+}
+
+.view-button {
+    width: 30px; /* 아이콘 중심의 작은 크기 */
+    height: 40px;
+    padding: 12px 18px;
+    font-size: 16px;
+    color: white;
+    background-color: rgba(255, 255, 255, 0.2); /* 버튼 배경색 */
+    border: 2px solid rgba(255, 255, 255, 0.5); /* 투명한 테두리 */
+    border-radius: 10px; /* 둥근 버튼 */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease; /* 부드러운 전환 */
+}
+.view-button.active {
+    background-color: #ff6347; /* 활성화된 버튼의 배경색 */
+    color: white; /* 텍스트 색상 */
+    border-color: #ff4500; /* 테두리 강조 */
+    transform: scale(1.1); /* 약간 확대 */
+}
+.view-button:hover {
+    background-color: rgba(255, 255, 255, 0.8); /* 밝은 배경색 */
+    color: black; /* 텍스트 색상 */
+    transform: scale(1.1); /* 확대 효과 */
+    border-color: white; /* 테두리 강조 */
+}
+
+/* Top 버튼 */
+.top-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    border-radius: 50%;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    font-size: 0.8em;
+}
+
+/* 로딩 효과 */
+.loading {
+    text-align: center;
+    padding: 20px;
+    font-size: 16px;
+    color: #999;
+}
+
+/* 반응형 설정 */
+@media (max-width: 1200px) {
+    .popular .movies-container {
+        grid-template-columns: repeat(5, 150px); /* 5열 */
+        padding: 0 20px; /* 좌우 여백 */
+    }
+}
+
+@media (max-width: 1000px) {
+    .popular .movies-container {
+        grid-template-columns: repeat(4, 150px); /* 4열 */
+        padding: 0 30px; /* 좌우 여백 */
+    }
+}
+
+/* 800px 이하: 3x3 레이아웃 */
+@media (max-width: 800px) {
+    .popular .movies-container {
+        grid-template-columns: repeat(3, 130px); /* 3열 */
+        grid-template-rows: repeat(3, 195px); /* 2행, 제목 공간 포함 */
+        grid-auto-rows: 195px; /* 포스터 비율 150:225(2:3)을 유지하는 높이 */
+        gap: 15px; /* 카드 간 간격 */
+        padding: 0 15px; /* 좌우 여백 */
+        margin: 0;
+    }
+
+    .popular .movie-card {
+        width: 130px; /* 카드 너비를 고정 */
+        height: 195px; /* 카드 높이 고정 (포스터 비율 포함) */
+        margin: 0; /* 추가 여백 제거 */
+        text-align: center; /* 텍스트 정렬 유지 */
+    }
+
+    .popular .movie-poster {
+        width: 100%; /* 카드의 너비에 맞춤 */
+        height: 175px; /* 고정된 높이 */
+        object-fit: contain; /* 이미지 비율을 유지하고 전체 표시 */
+        background-color: #000; /* 빈 공간을 검은색으로 채움 */
+        border-radius: 6px; /* 모서리 둥글게 */
+    }
+
+    .popular .movie-title {
+        font-size: 0.75em; /* 텍스트 크기 축소 */
+        margin: 5px 0 0; /* 제목과 포스터 간의 간격 */
+    }
+}
+
+@media(max-width: 520px){
+    .popular .movies-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
