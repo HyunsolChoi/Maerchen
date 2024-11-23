@@ -6,7 +6,7 @@ import Wishlist from './wishlist/Wishlist';
 import React, { useEffect, useState } from 'react';
 import './index.css'
 import Navbar from './config/reusableComponents/Navbar'
-import Search from "./search/Search";
+//import Search from "./search/Search";
 
 function App() {
     //세션에 저장된 정보로 인증
@@ -118,7 +118,7 @@ function App() {
                                 )
                             }
                         />
-                        <Route
+                       {/* <Route
                             path="/search"
                             element={
                                 sessionToken || localToken ? (
@@ -127,7 +127,7 @@ function App() {
                                     <Navigate to="/signin" replace/>
                                 )
                             }
-                        />
+                        />*/}
                         <Route
                             path="/signin"
                             element={
