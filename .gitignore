@@ -10,7 +10,6 @@
 
 # production
 /build
-/src/search
 
 # misc
 .DS_Store
