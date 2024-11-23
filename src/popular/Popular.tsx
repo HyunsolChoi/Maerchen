@@ -1,18 +1,25 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import './Popular.css';
-import { User, Movie } from "../config/interfaces";
+import '../config/views/infiniteView.css'
+import '../config/views/tableView.css'
+import {User, Movie} from "../config/interfaces";
+import { faChevronUp } from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {toggleWish} from "../config/functions/toggleWish";
+import debounce from "lodash/debounce";
+import Loader from "../config/reusableComponents/Loader";
 
 interface HomeProps {
     id: string;
 }
 
-const Popular: React.FC<HomeProps> = ({ id }) => {
+const Popular: React.FC<HomeProps> = ({id}) => {
     const [tableViewMovies, setTableViewMovies] = useState<Movie[]>([]); // Table View Movies
     const [popularMovies, setPopularMovies] = useState<Movie[]>([]); // 모든 영화 리스트
 
     const [currentPage, setCurrentPage] = useState<number>(1); // 현재 페이지
     const [moviesPerPage, setMoviesPerPage] = useState<number>(12); // 페이지당 영화 수
-    const [viewMode, setViewMode] = useState<"table" | "infinite">("infinite"); // Table View / Infinite Scroll 상태
+    const [viewMode, setViewMode] = useState<"table" | "infinite">("table"); // Table View / Infinite Scroll 상태
     const [isFetching, setIsFetching] = useState<boolean>(false); // 로딩 상태 (무한 스크롤)
 
     const previousWidth = useRef<number>(window.innerWidth);
@@ -91,20 +98,11 @@ const Popular: React.FC<HomeProps> = ({ id }) => {
             !isFetching && // 로딩 중이 아닐 때만
             popularMovies.length > 0 // 초기 데이터가 로드된 상태에서만 실행
         ) {
-            await fetchMovies(currentPage + 1); // 다음 페이지 요청
+            if(currentPage<500)
+                await fetchMovies(currentPage + 1); // 다음 페이지 요청
         }
     };
 
-    // 유틸리티 함수: 디바운스 구현
-    const debounce = (func: (...args: any[]) => void, delay: number) => {
-        let timer: NodeJS.Timeout;
-        return (...args: any[]) => {
-            clearTimeout(timer); // 기존 타이머 제거
-            timer = setTimeout(() => func(...args), delay); // 새로운 타이머 설정
-        };
-    };
-
-    // handleScroll에 디바운스 적용
     const debouncedHandleScroll = debounce(handleScroll, 200); // 200ms 디바운스
 
     const fetchMovies = async (page: number) => {
@@ -137,7 +135,7 @@ const Popular: React.FC<HomeProps> = ({ id }) => {
     const updateMoviesPerPage = () => {
         const currentWidth = window.innerWidth;
 
-        const breakpoints = [520, 800, 1000, 1200];
+        const breakpoints = [450, 768, 1000, 1200];
         if (
             breakpoints.some(
                 (bp) =>
@@ -146,8 +144,6 @@ const Popular: React.FC<HomeProps> = ({ id }) => {
                     currentWidth === bp
             )
         ) {
-
-            console.log("updateMoviesPerPage " + viewModeRef.current);
             if (viewModeRef.current === "table") {
                 setCurrentPage(1); // 테이블 뷰일 때만 currentPage 초기화
             }
@@ -155,41 +151,23 @@ const Popular: React.FC<HomeProps> = ({ id }) => {
 
         let cols = 6; // 기본 열 수
 
-        if(currentWidth <= 520) {
-            cols = 2;
+        if (currentWidth <= 450) {
+            cols = 3;
             setMoviesPerPage(cols * 3);
-        } else if (currentWidth <= 800) {
-            cols = 3; // 800px 이하일 때 3열
+        } else if (currentWidth <= 768) {
+            cols = 3;
             setMoviesPerPage(cols * 3);
         } else if (currentWidth <= 1000) {
             cols = 4;
-            setMoviesPerPage(cols * 2); // 기본 2행
-        } else if (currentWidth <= 1200){
+            setMoviesPerPage(cols * 3);
+        } else if (currentWidth <= 1200) {
             cols = 5;
-            setMoviesPerPage(cols * 2); // 기본 2행
+            setMoviesPerPage(cols * 2);
         } else {
             cols = 6;
             setMoviesPerPage(cols * 2);
         }
-
         previousWidth.current = currentWidth;
-    };
-
-    const toggleWish = (movie: Movie) => {
-        const isMovieLiked = wish.some((likedMovie) => likedMovie.id === movie.id);
-        const updatedWish = isMovieLiked
-            ? wish.filter((likedMovie) => likedMovie.id !== movie.id) // 이미 찜한 경우 제거
-            : [
-                ...wish,
-                {
-                    id: movie.id,
-                    title: movie.title,
-                    poster_path: movie.poster_path,
-                },
-            ]; // 새로 추가
-
-        setWish(updatedWish); // 상태 업데이트
-        localStorage.setItem(`${id}_wish`, JSON.stringify(updatedWish)); // 로컬 스토리지에 저장
     };
 
     useEffect(() => {
@@ -211,16 +189,16 @@ const Popular: React.FC<HomeProps> = ({ id }) => {
                     console.error('Error fetching movies:', error);
                 }
             };
-            fetchMovies();
+            fetchMovies().then(() => {
+                console.log("Initial movies loaded");
+            });
+
         }
     }, [API_KEY]);
 
-    const handleSwitcher = () => {
-        if(viewMode==="table")
-            setViewMode("infinite");
-        else
-            setViewMode("table");
-    }
+    const handleToggleWish = (movie: Movie) => {
+        toggleWish(movie, wish, setWish, id);
+    };
 
     const fetchMoviesByCategory = async (url: string): Promise<Movie[]> => {
         const response = await fetch(url);
@@ -238,62 +216,63 @@ const Popular: React.FC<HomeProps> = ({ id }) => {
         } else if (direction === "next" && currentPage < Math.ceil(tableViewMovies.length / moviesPerPage)) {
             setCurrentPage((prevPage) => prevPage + 1);
         }
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        window.scrollTo({top: 0, behavior: "smooth"});
     };
 
     return (
         <div>
+            {isFetching && <Loader />}
             <div className="view-switcher">
                 <button
                     className={`view-button ${viewMode === "table" ? "active" : ""}`}
-                    onClick={handleSwitcher}
+                    onClick={() => setViewMode("table")}
                 >
                     <i className="fa-solid fa-table-cells-large"></i>
                 </button>
                 <button
                     className={`view-button ${viewMode === "infinite" ? "active" : ""}`}
-                    onClick={handleSwitcher}
+                    onClick={() => setViewMode("infinite")}
                 >
                     <i className="fa-solid fa-scroll"></i>
                 </button>
             </div>
             <div className="popular">
-                <div className="movies-container">
                     {viewMode === "table" ? (
-                        currentMovies.map((movie, index) => (
-                            <div key={`${movie.id}-${index}`} className="movie-card" onClick={() => toggleWish(movie)}>
-                                <img
-                                    src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                                    alt={movie.title}
-                                    className="movie-poster"
-                                />
-                                {wish.some((likedMovie) => likedMovie.id === movie.id) && (
-                                    <i className="fa-solid fa-thumbs-up movie-liked-icon"/>
-                                )}
-                                <h3 className="movie-title">{movie.title}</h3>
-                            </div>
-                        ))
+                        <div className="table-movies-container">
+                            {currentMovies.map((movie, index) => (
+                                <div key={`${movie.id}-${index}`} className="table-movie-card" onClick={() => handleToggleWish(movie)}>
+                                    <img
+                                        src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                                        alt={movie.title}
+                                        className="table-movie-poster"
+                                    />
+                                    {wish.some((likedMovie) => likedMovie.id === movie.id) && (
+                                        <i className="fa-solid fa-thumbs-up table-movie-liked-icon"/>
+                                    )}
+                                    <h3 className="table-movie-title">{movie.title}</h3>
+                                </div>
+                            ))}
+                        </div>
                     ) : (
-                        popularMovies.map((movie, index) => (
-                            <div key={`${movie.id}-${index}`} className="movie-card" onClick={() => toggleWish(movie)}>
-                                <img
-                                    src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                                    alt={movie.title}
-                                    className="movie-poster"
-                                />
-                                {wish.some((likedMovie) => likedMovie.id === movie.id) && (
-                                    <i className="fa-solid fa-thumbs-up movie-liked-icon"/>
-                                )}
-                                <h3 className="movie-title">{movie.title}</h3>
-                            </div>
-                        ))
+                        <div className="movies-container">
+                            {popularMovies.map((movie, index) => (
+                                <div key={`${movie.id}-${index}`} className="movie-card" onClick={() => handleToggleWish(movie)}>
+                                    <img
+                                        src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                                        alt={movie.title}
+                                        className="movie-poster"
+                                    />
+                                    {wish.some((likedMovie) => likedMovie.id === movie.id) && (
+                                        <i className="fa-solid fa-thumbs-up movie-liked-icon"/>
+                                    )}
+                                    <h3 className="movie-title">{movie.title}</h3>
+                                </div>
+                            ))}
+                        </div>
                     )}
-                </div>
-                {viewMode === "infinite" && isFetching && <div className="loading">로딩 중...</div>}
-
                 {viewMode === "infinite" && (
                     <div className="top-button" onClick={() => window.scrollTo({top: 0, behavior: "smooth"})}>
-                        <i className="fa-solid fa-arrow-up"></i> Top
+                        <FontAwesomeIcon icon={faChevronUp} />
                     </div>
                 )}
 

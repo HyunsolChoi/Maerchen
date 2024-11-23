@@ -5,7 +5,8 @@ import Popular from './popular/Popular';
 import Wishlist from './wishlist/Wishlist';
 import React, { useEffect, useState } from 'react';
 import './index.css'
-import Navbar from './config/Navbar'
+import Navbar from './config/reusableComponents/Navbar'
+import Search from "./search/Search";
 
 function App() {
     //세션에 저장된 정보로 인증
@@ -112,6 +113,16 @@ function App() {
                             element={
                                 sessionToken || localToken ? (
                                     <Wishlist id={username} key={key}/>
+                                ) : (
+                                    <Navigate to="/signin" replace/>
+                                )
+                            }
+                        />
+                        <Route
+                            path="/search"
+                            element={
+                                sessionToken || localToken ? (
+                                    <Search id={username} key={key}/>
                                 ) : (
                                     <Navigate to="/signin" replace/>
                                 )

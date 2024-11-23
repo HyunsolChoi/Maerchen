@@ -1,0 +1,154 @@
+
+.table-movies-container {
+    display: grid; /* CSS Grid 사용 */
+    grid-template-columns: repeat(6, 150px); /* 반응형 열 구성 */
+    grid-template-rows: repeat(2, 260px); /* 2행, 제목 공간 포함 */
+    gap: 20px; /* 카드 간격 고정 */
+    justify-content: center; /* 중앙 정렬 */
+    width: auto; /* 콘텐츠 크기에 따라 자동 조정 */
+    max-width: 1200px; /* 최대 너비 제한 */
+    padding: 0; /* 좌우 여백 조정 */
+    margin-bottom: 20px; /* 버튼과의 간격 */
+}
+
+.table-movie-card {
+    position: relative;
+    display: flex;
+    flex-direction: column; /* 포스터와 텍스트를 세로 배치 */
+    align-items: center; /* 중앙 정렬 */
+    width: 150px; /* 고정된 카드 크기 */
+    text-align: center;
+    background-color: transparent; /* 카드 배경 제거 */
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.table-movie-card:hover {
+    transform: scale(1.05); /* 확대 효과 */
+}
+
+.table-movie-poster {
+    width: 100%; /* 카드의 너비에 맞춤 */
+    height: 225px;
+    object-fit: cover; /* 포스터 비율 유지 */
+    display: block;
+    border-radius: 8px; /* 모서리 둥글게 */
+}
+
+.table-movie-title {
+    margin: 5px 0 0; /* 제목과 포스터 간 여백 */
+    font-size: 0.9em; /* 텍스트 크기 */
+    color: white; /* 텍스트 색상 */
+    text-align: center;
+    line-height: 1.2; /* 줄 간격 */
+    max-height: 2.4em; /* 두 줄까지만 표시 (1.2em × 2) */
+    max-width: 100%;
+    overflow: hidden; /* 넘치는 텍스트 숨김 */
+    text-overflow: ellipsis; /* 말줄임표 추가 */
+    display: -webkit-box; /* Flexbox-like 동작 */
+    -webkit-line-clamp: 2; /* 두 줄로 제한 */
+    -webkit-box-orient: vertical; /* 수직 박스 배치 */
+}
+
+.table-movie-liked-icon {
+    position: absolute; /* 포스터 우측 상단에 배치 */
+    top: 8px; /* 위쪽 여백 */
+    right: 9px; /* 오른쪽 여백 */
+    font-size: 20px;
+    background: linear-gradient(to bottom, #ff4500, orangered, #ff7f50, #ffd700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    z-index: 6; /* 포스터 위에 렌더링 */
+}
+
+@media (max-width: 1200px) {
+    .table-movies-container {
+        grid-template-columns: repeat(5, 150px); /* 5열 */
+        padding: 0 20px; /* 좌우 여백 */
+    }
+}
+
+@media (max-width: 1000px) {
+    .table-movies-container {
+        grid-template-columns: repeat(4, 150px);
+        grid-template-rows: repeat(3, 215px); /* 2행, 제목 공간 포함 */
+        gap: 10px 3px;
+    }
+    .table-movie-card {
+        width: 130px; /* 카드 너비를 고정 */
+        height: 215px; /* 카드 높이 고정 (포스터 비율 포함) */
+        margin: 0; /* 추가 여백 제거 */
+        text-align: center; /* 텍스트 정렬 유지 */
+    }
+}
+
+@media (max-width: 768px) {
+    .table-movies-container {
+        grid-template-columns: repeat(3, 130px);
+        grid-template-rows: repeat(3, 195px);
+        grid-auto-rows: 195px;
+        gap: 15px;
+        padding: 0 15px;
+        margin: 0;
+    }
+
+    .table-movie-card {
+        width: 130px;
+        height: 195px;
+        margin: 0;
+        text-align: center;
+    }
+
+    .table-movie-poster {
+        width: 100%;
+        height: 175px;
+        object-fit: contain;
+        background-color: #000;
+        border-radius: 6px;
+    }
+
+    .table-movie-title {
+        font-size: 0.75em;
+        margin: 5px 0 0;
+    }
+}
+
+@media(max-width: 450px) {
+    .table-movies-container {
+        grid-template-columns: repeat(3, 106px);
+        grid-auto-rows: 179px; /* 자동으로 높이를 조정 */
+        gap: 10px;
+    }
+
+    .table-movie-card {
+        width: 106px;
+        min-height: 179px; /* 최소 높이 설정 */
+        display: flex;
+        align-items: center;
+    }
+
+    .table-movie-poster {
+        width: 100%;
+        height: 159px; /* 포스터 높이 유지 */
+        object-fit: contain; /* 포스터 비율 유지 */
+        background-color: #000;
+        border-radius: 6px;
+    }
+
+    .table-movie-title {
+        font-size: 0.75em; /* 글자 크기 줄임 */
+        margin: 5px 0 0 0; /* 여백 조정 */
+        line-height: 1.2;
+        max-height: 20px;
+        max-width: 100%;
+        overflow: hidden; /* 넘치는 텍스트 숨김 */
+        text-overflow: ellipsis; /* 넘치는 텍스트 말줄임 표시 */
+        white-space: nowrap; /* 한 줄로 표시 */
+    }
+
+    .table-movie-liked-icon {
+        font-size: 15px;
+    }
+}

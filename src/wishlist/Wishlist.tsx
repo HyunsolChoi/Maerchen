@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./Wishlist.css";
+import "../config/views/tableView.css"
 import { Movie } from "../config/interfaces"
 
 interface HomeProps {
@@ -32,7 +33,7 @@ const Wishlist: React.FC<HomeProps> = ({ id }) => {
     const updateMoviesPerPage = () => {
         const currentWidth = window.innerWidth;
 
-        const breakpoints = [520, 800, 1000, 1200];
+        const breakpoints = [450, 768, 1000, 1200];
         if (
             breakpoints.some(
                 (bp) =>
@@ -46,18 +47,18 @@ const Wishlist: React.FC<HomeProps> = ({ id }) => {
 
         let cols = 6; // 기본 열 수
 
-        if(currentWidth <= 520) {
-            cols = 2;
-            setMoviesPerPage(cols *2);
-        } else if (currentWidth <= 800) {
-            cols = 3; // 800px 이하일 때 3열
-            setMoviesPerPage(cols * 3); // 3행 고정
+        if (currentWidth <= 450) {
+            cols = 3;
+            setMoviesPerPage(cols * 3);
+        } else if (currentWidth <= 768) {
+            cols = 3;
+            setMoviesPerPage(cols * 3);
         } else if (currentWidth <= 1000) {
             cols = 4;
-            setMoviesPerPage(cols * 2); // 기본 2행
-        } else if (currentWidth <= 1200){
+            setMoviesPerPage(cols * 3);
+        } else if (currentWidth <= 1200) {
             cols = 5;
-            setMoviesPerPage(cols * 2); // 기본 2행
+            setMoviesPerPage(cols * 2);
         } else {
             cols = 6;
             setMoviesPerPage(cols * 2);
@@ -101,6 +102,7 @@ const Wishlist: React.FC<HomeProps> = ({ id }) => {
         } else if (direction === "next" && currentPage < Math.ceil(wishlistMovies.length / moviesPerPage)) {
             setCurrentPage((prevPage) => prevPage + 1);
         }
+        window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
     return (
@@ -108,22 +110,22 @@ const Wishlist: React.FC<HomeProps> = ({ id }) => {
             <div className="wishlist">
                 {wishlistMovies.length > 0 ? (
                     <>
-                        <div className="movies-container">
+                        <div className="table-movies-container">
                             {currentMovies.map((movie) => (
-                                <div key={movie.id} className="movie-card">
+                                <div key={movie.id} className="table-movie-card">
                                     {/* 좋아요 아이콘 추가 */}
                                     {wishlistMovies.some((m) => m.id === movie.id) && (
                                         <div className="like-icon">
-                                            <i className="fa-solid fa-thumbs-up movie-liked-icon"></i>
+                                            <i className="fa-solid fa-thumbs-up table-movie-liked-icon"></i>
                                         </div>
                                     )}
                                     <img
                                         src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                                         alt={movie.title}
-                                        className="movie-poster"
+                                        className="table-movie-poster"
                                         onClick={() => removeFromWishlist(movie.id)} // 포스터 클릭 시 삭제
                                     />
-                                    <h3 className="movie-title">{movie.title}</h3>
+                                    <h3 className="table-movie-title">{movie.title}</h3>
                                 </div>
                             ))}
                         </div>

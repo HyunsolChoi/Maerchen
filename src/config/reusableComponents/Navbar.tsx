@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClapperboard, faUser, faBars } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -16,13 +16,16 @@ const Navbar: React.FC<NavbarProps> = ({ username, onLogout, forceRerender }) =>
     const navigate = useNavigate();
     const location = useLocation();
 
+    const dropdownRef = useRef<HTMLDivElement>(null); // 드롭다운 메뉴 참조
+    const menuRef = useRef<HTMLDivElement>(null); // 모바일 메뉴 참조
+
     const handleNavigate = (path: string) => {
         if (location.pathname === path) {
-            forceRerender(); // 동일 경로일 때 리렌더링 강제
+            forceRerender();
         } else {
-            navigate(path); // 경로 변경
+            navigate(path);
         }
-        window.scrollTo(0, 0); // 스크롤 위치를 상단으로 초기화
+        window.scrollTo(0, 0);
     };
 
     const toggleMenu = () => {
@@ -39,8 +42,25 @@ const Navbar: React.FC<NavbarProps> = ({ username, onLogout, forceRerender }) =>
         });
     };
 
+    const handleClickOutside = (event: MouseEvent) => {
+        if (
+            dropdownRef.current && !dropdownRef.current.contains(event.target as Node) && // 드롭다운 외부 클릭
+            menuRef.current && !menuRef.current.contains(event.target as Node) // 모바일 메뉴 외부 클릭
+        ) {
+            setDropdownVisible(false);
+            setMenuVisible(false);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
     if (location.pathname === "/signin") {
-        return null; // Navbar 비활성화
+        return null;
     }
 
     return (
@@ -53,10 +73,10 @@ const Navbar: React.FC<NavbarProps> = ({ username, onLogout, forceRerender }) =>
             <ul className="navbar-menu">
                 <li className="navbar-item" onClick={() => handleNavigate("/")}>홈</li>
                 <li className="navbar-item" onClick={() => handleNavigate("/popular")}>대세 콘텐츠</li>
-                <li className="navbar-item">찾아보기</li>
+                <li className="navbar-item" onClick={() => handleNavigate("/search")}>찾아보기</li>
                 <li className="navbar-item" onClick={() => handleNavigate("/wishlist")}>찜</li>
             </ul>
-            <div className="user-icon" onClick={toggleDropdown}>
+            <div className="user-icon" onClick={toggleDropdown} ref={dropdownRef}>
                 <FontAwesomeIcon icon={faUser} />
                 {dropdownVisible && (
                     <div className="dropdown-menu">
@@ -65,14 +85,14 @@ const Navbar: React.FC<NavbarProps> = ({ username, onLogout, forceRerender }) =>
                     </div>
                 )}
             </div>
-            <div className="menu-icon" onClick={toggleMenu}>
+            <div className="menu-icon" onClick={toggleMenu} ref={menuRef}>
                 <FontAwesomeIcon icon={faBars} />
                 {menuVisible && (
                     <div className="dropdown-menu">
-                        <p className="dropdown-item" onClick={() => handleNavigate("/")}>홈</p>
-                        <p className="dropdown-item" onClick={() => handleNavigate("/popular")}>대세 콘텐츠</p>
-                        <p className="dropdown-item">찾아보기</p>
-                        <p className="dropdown-item" onClick={() => handleNavigate("/wishlist")}>찜</p>
+                        <p className="dropdown-item mobile" onClick={() => handleNavigate("/")}>홈</p>
+                        <p className="dropdown-item mobile" onClick={() => handleNavigate("/popular")}>대세 콘텐츠</p>
+                        <p className="dropdown-item mobile" onClick={() => handleNavigate("/search")}>찾아보기</p>
+                        <p className="dropdown-item mobile" onClick={() => handleNavigate("/wishlist")}>찜</p>
                     </div>
                 )}
             </div>

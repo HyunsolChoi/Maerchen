@@ -96,6 +96,10 @@ body{
     background-color: #444; /* 약간 다른 배경색 */
 }
 
+.mobile:hover {
+    text-decoration: underline;
+}
+
 /* 유저 드롭다운 아이템 스타일 (특화) */
 .user-dropdown-menu .dropdown-item {
     font-weight: bold; /* 텍스트를 굵게 */

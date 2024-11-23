@@ -4,6 +4,7 @@ import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './Home.css';
 import { User, Movie } from '../config/interfaces';
+import {toggleWish} from "../config/functions/toggleWish";
 
 interface BannerMovie{
     id: number;
@@ -101,22 +102,8 @@ const Home: React.FC<HomeProps> = ({ id }) => {
         return data.results;
     };
 
-    // 찜 상태 토글: 영화 객체 추가/제거
-    const toggleWish = (movie: Movie) => {
-        const isMovieLiked = wish.some((likedMovie) => likedMovie.id === movie.id);
-        const updatedWish = isMovieLiked
-            ? wish.filter((likedMovie) => likedMovie.id !== movie.id) // 이미 찜한 경우 제거
-            : [
-                ...wish,
-                {
-                    id: movie.id,
-                    title: movie.title,
-                    poster_path: movie.poster_path,
-                },
-            ]; // 새로 추가
-
-        setWish(updatedWish); // 상태 업데이트
-        localStorage.setItem(`${id}_wish`, JSON.stringify(updatedWish)); // 로컬 스토리지에 저장
+    const handleToggleWish = (movie: Movie) => {
+        toggleWish(movie, wish, setWish, id);
     };
 
     return (
@@ -135,10 +122,10 @@ const Home: React.FC<HomeProps> = ({ id }) => {
                 </div>
             )}
 
-            <MovieSection title="인기 영화" movies={movieData.popularMovies} wish={wish} toggleWish={toggleWish}/>
-            <MovieSection title="최신 영화" movies={movieData.latestMovies} wish={wish} toggleWish={toggleWish}/>
-            <MovieSection title="액션 영화" movies={movieData.actionMovies} wish={wish} toggleWish={toggleWish}/>
-            <MovieSection title="애니메이션 영화" movies={movieData.animationMovies} wish={wish} toggleWish={toggleWish}/>
+            <MovieSection title="인기 영화" movies={movieData.popularMovies} wish={wish} handleToggleWish={handleToggleWish}/>
+            <MovieSection title="최신 영화" movies={movieData.latestMovies} wish={wish} handleToggleWish={handleToggleWish}/>
+            <MovieSection title="액션 영화" movies={movieData.actionMovies} wish={wish} handleToggleWish={handleToggleWish}/>
+            <MovieSection title="애니메이션 영화" movies={movieData.animationMovies} wish={wish} handleToggleWish={handleToggleWish}/>
         </div>
     );
 };
@@ -147,12 +134,12 @@ const MovieSection = ({
                           title,
                           movies,
                           wish,
-                          toggleWish,
+                          handleToggleWish,
                       }: {
     title: string;
     movies: Movie[];
     wish: Movie[]; // 찜한 영화 객체 배열
-    toggleWish: (movie: Movie) => void; // 영화 객체 전달
+    handleToggleWish: (movie: Movie) => void;
 }) => {
     const rowRef = useRef<HTMLDivElement>(null);
     const [scrolling, setScrolling] = useState(false);
@@ -204,7 +191,7 @@ const MovieSection = ({
                 </div>
                 <div className={`movies-row ${scrolling ? 'no-hover' : ''}`} ref={rowRef}>
                     {movies.map((movie, index) => (
-                        <div key={`${movie.id}-${index}`} className="movie-card" onClick={() => toggleWish(movie)}>
+                        <div key={`${movie.id}-${index}`} className="movie-card" onClick={() => handleToggleWish(movie)}>
                             <img
                                 src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                                 alt={movie.title}
