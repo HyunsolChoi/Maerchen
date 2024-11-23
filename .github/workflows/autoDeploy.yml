@@ -1,10 +1,11 @@
 name: autoDeploy
 
-# 실행 조건: Develop 브랜치에 푸시될 때 실행
+# 실행 조건: Develop,feature 브랜치에 푸시될 때 실행
 on:
   push:
     branches:
       - Develop
+      - feature
 
 jobs:
   build-and-deploy:

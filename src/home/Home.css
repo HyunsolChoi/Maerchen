@@ -51,7 +51,6 @@ body, .home {
     padding-left: calc(2vh + 40px);
 }
 
-/* Movie Section */
 .movies-section {
     margin-top: 7vh;
     margin-bottom: 10px;
@@ -95,7 +94,7 @@ body, .home {
     display: none; /* 스크롤바 숨기기 */
 }
 
-.movie-card {
+.home-movie-card {
     flex: 0 0 calc((100% - 15px * 5) / 6); /* 카드 너비 균등 분배 */
     background-color: #222;
     border-radius: 8px;
@@ -106,11 +105,11 @@ body, .home {
     cursor: pointer;
 }
 
-.movie-card:hover {
+.home-movie-card:hover {
     transform: scale(1.05); /* x축은 그대로, y축만 확대 */
     z-index: 5; /* 확대된 카드가 위로 올라오도록 설정 */
 }
-.movie-poster {
+.home-movie-poster {
     width: 100%;
     height: auto;
     display: block;
@@ -140,23 +139,7 @@ body, .home {
     color: rgba(255, 255, 255, 1); /* 호버 시 완전히 밝은 흰색 */
 }
 
-.user-icon {
-    color: white;
-    cursor: pointer;
-    font-size: 1.5rem;
-    display: flex;
-    align-items: center;
-    position: absolute; /* 절대 위치로 설정 */
-    right: 5vh; /* 오른쪽에서 5vh 여백 */
-    top: 50%; /* 수직 중앙 정렬 */
-    transform: translateY(-50%); /* 정확한 수직 정렬 */
-}
-
-.user-icon:hover {
-    color: rgba(255, 255, 255, 0.8);
-}
-
-.movie-liked-icon {
+.home-movie-liked-icon {
     position: absolute;
     top: 8px;
     right: 8px;
@@ -167,82 +150,128 @@ body, .home {
     z-index: 9;
 }
 
-/* 모바일 환경 반응형 CSS */
+@media (max-width: 1000px) {
+    .movies-section {
+        margin-top: 3vh;
+        margin-bottom: 10px;
+        padding: 0 20px;
+    }
+
+    .movies-section h2 {
+        margin-bottom: 15px;
+        font-size: 1.3em;
+        padding: 0 calc(2vh + 40px);
+    }
+
+}
+
 @media (max-width: 768px) {
-
-    .user-icon {
-        position: absolute;
-        right: calc(5vh + 40px); /* `faBars` 오른쪽 여백에 맞춰 위치 */
-        top: 50%; /* 수직 중앙 정렬 */
-        transform: translateY(-50%);
-        margin: 0; /* 여백 제거 */
-    }
-
-    .menu-icon {
-        display: flex;
-        position: absolute;
-        right: 5vh; /* 화면 오른쪽 끝에서 5vh만큼 떨어짐 */
-        top: 50%; /* 수직 중앙 정렬 */
-        transform: translateY(-50%);
-        font-size: 1.5em; /* 아이콘 크기 */
-        color: white; /* 기본 색상 */
-        cursor: pointer; /* 커서 변경 */
-    }
-    .menu-icon:hover {
-        color: rgba(255, 255, 255, 0.8);
-    }
-
-    /* 배너 관련 스타일 */
     .top-banner {
-        height: 70vh; /* 모바일에서 배너 높이 조정 */
+        height: 70vh;
     }
 
     .movies-section {
-        margin-top: 20px;
-        margin-bottom: 10px;
-        padding: 0 0;
+        margin: 20px 0 10px 0;
+        padding: 0;
     }
-    /* 섹션 관련 스타일 */
+
     .movies-section h2 {
-        font-size: 1.2em; /* 모바일에서 제목 크기 조정 */
+        font-size: 1.2em;
     }
 
     .movies-row-container {
-        padding: 0 0; /* 좌우 끝 간격 좁힘 */
+        padding: 0 0;
     }
 
-    .movies-section h2 {
-        padding: 0 10px; /* 섹션 제목 간격 좁힘 */
-        font-size: 1.2em; /* 섹션 제목 크기 조정 */
+    .home-movie-card {
+        flex: 0 0 calc((100% - 12px * 5) / 5);
     }
 
-    .movie-card {
-        flex: 0 0 calc((100% - 12px * 2) / 2); /* 4개의 카드가 한 행에 나타나도록 조정 */
-    }
-
-    .movie-poster {
+    .home-movie-poster {
         width: 100%;
         height: auto;
         display: block;
     }
 
     .top-banner-title {
-        font-size: 1.8em; /* 기존보다 작게 설정 */
-        padding-left: 20px; /* 텍스트 시작 간격 조정 */
+        font-size: 1.8em;
+        padding-left: 20px;
         margin-bottom: 10px;
     }
 
     .top-banner-overview {
-        font-size: 0.9em; /* 설명 텍스트 크기 축소 */
-        max-width: 80vw; /* 배너 텍스트의 최대 너비 제한 */
+        font-size: 0.9em;
+        max-width: 80vw;
         text-align: justify;
-        padding-left: 20px; /* 좌측 여백 조정 */
-        padding-bottom: 20px; /* 하단 여백 축소 */
+        padding-left: 20px;
+        padding-bottom: 20px;
     }
     .scroll-button.left {
         margin-left: 1vh;
     }
     .scroll-button.right {
         margin-right: 1vh; /* 오른쪽 버튼과 영화 행 사이에 여백 추가 */
+    }
+}
+
+@media (max-width: 600px) {
+    .top-banner {
+        height: 50vh;
+    }
+
+    .home-movie-card {
+        flex: 0 0 calc((100% - 12px * 4) / 4);
+    }
+    .movies-section h2 {
+        font-size: 1em; /* 섹션 제목 크기 조정 */
+    }
+    .scroll-button.left {
+        margin-left: 0;
+    }
+    .scroll-button.right {
+        margin-right: 0; /* 오른쪽 버튼과 영화 행 사이에 여백 추가 */
+    }
+
+    .home-movie-liked-icon {
+        font-size: 15px;
+    }
+
+    .top-banner-title {
+        font-size: 1.5em;
+
+        padding-left: 20px;
+        margin-bottom: 10px;
+    }
+
+    .top-banner-overview {
+        font-size: 0.7em;
+
+        max-width: 80vw;
+        text-align: justify;
+        padding-left: 20px;
+        padding-bottom: 20px;
+    }
+}
+
+@media (max-width: 450px) {
+    .top-banner {
+        height: 40vh;
+    }
+    .movies-section {
+        margin-top: 10px;
+        margin-bottom: 5px;
+        padding: 0 0;
+    }
+    .home-movie-liked-icon {
+        font-size: 10px;
+    }
+    .top-banner-title {
+        font-size: 1.2em;
+    }
+
+    .top-banner-overview {
+        font-size: 0.7em;
+
+        padding-bottom: 7px;
     }
 }

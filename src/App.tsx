@@ -6,14 +6,13 @@ import Wishlist from './wishlist/Wishlist';
 import React, { useEffect, useState } from 'react';
 import './index.css'
 import Navbar from './config/reusableComponents/Navbar'
-//import Search from "./search/Search";
+import Search from "./search/Search";
 
 function App() {
     //세션에 저장된 정보로 인증
     const [sessionToken, setSessionToken] = useState(false);
     //saveLogin 체크 시 로컬 스토리지에 인증 정보 저장
     const [localToken, setLocalToken] = useState(false);
-    const [isLandscape, setIsLandscape] = useState(false);
     const [username, setUsername] = useState<string>('Guest');
     const [key, setKey] = useState(0);
 
@@ -28,24 +27,6 @@ function App() {
             setUsername(sessionEmail);
             setSessionToken(true);
         }
-
-        //모바일 가로 화면에서 비활성화시킴
-        const detectOrientationAndDevice = () => {
-            const isLandscapeMode = window.innerWidth > window.innerHeight;
-            const isMobileDevice =
-                /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-                    navigator.userAgent
-                );
-
-            setIsLandscape(isLandscapeMode && isMobileDevice);
-        };
-
-        detectOrientationAndDevice(); // 초기 실행
-        window.addEventListener("resize", detectOrientationAndDevice);
-
-        return () => {
-            window.removeEventListener("resize", detectOrientationAndDevice);
-        };
     }, []);
 
     const handleLogout = () => {
@@ -80,70 +61,63 @@ function App() {
 
     return (
         <div>
-            {isLandscape ? (
-                <div className="landscape-warning">
-                    모바일에서는 세로 모드로만 사용 가능합니다.
-                </div>
-            ) : (
-                <BrowserRouter basename="/Maerchen">
-                    <Navbar username={username} onLogout={handleLogout} forceRerender={forceRerender}/>
-                    <Routes>
-                        <Route
-                            path="/"
-                            element={
-                                sessionToken || localToken ? (
-                                    <Home id={username} key={key}/>
-                                ) : (
-                                    <Navigate to="/signin" replace/>
-                                )
-                            }
-                        />
-                        <Route
-                            path="/popular"
-                            element={
-                                sessionToken || localToken ? (
-                                    <Popular id={username} key={key}/>
-                                ) : (
-                                    <Navigate to="/signin" replace/>
-                                )
-                            }
-                        />
-                        <Route
-                            path="/wishlist"
-                            element={
-                                sessionToken || localToken ? (
-                                    <Wishlist id={username} key={key}/>
-                                ) : (
-                                    <Navigate to="/signin" replace/>
-                                )
-                            }
-                        />
-                       {/* <Route
-                            path="/search"
-                            element={
-                                sessionToken || localToken ? (
-                                    <Search id={username} key={key}/>
-                                ) : (
-                                    <Navigate to="/signin" replace/>
-                                )
-                            }
-                        />*/}
-                        <Route
-                            path="/signin"
-                            element={
-                                sessionToken || localToken ? (
-                                    <Navigate to="/" replace/>
-                                ) : (
-                                    <SignIn onLogin={handleLogin}/>
-                                )
-                            }
-                        />
-                        <Route path="*" element={<Navigate to="/signin" replace/>}/>
-                    </Routes>
-                </BrowserRouter>
-            )}
+            <BrowserRouter basename="/Maerchen">
+                <Navbar username={username} onLogout={handleLogout} forceRerender={forceRerender}/>
+                <Routes>
+                    <Route
+                        path="/"
+                        element={
+                            sessionToken || localToken ? (
+                                <Home id={username} key={key}/>
+                            ) : (
+                                <Navigate to="/signin" replace/>
+                            )
+                        }
+                    />
+                    <Route
+                        path="/popular"
+                        element={
+                            sessionToken || localToken ? (
+                                <Popular id={username} key={key}/>
+                            ) : (
+                                <Navigate to="/signin" replace/>
+                            )
+                        }
+                    />
+                    <Route
+                        path="/wishlist"
+                        element={
+                            sessionToken || localToken ? (
+                                <Wishlist id={username} key={key}/>
+                            ) : (
+                                <Navigate to="/signin" replace/>
+                            )
+                        }
+                    />
+                    <Route
+                        path="/search"
+                        element={
+                            sessionToken || localToken ? (
+                                <Search id={username} key={key}/>
+                            ) : (
+                                <Navigate to="/signin" replace/>
+                            )
+                        }
+                    />
+                    <Route
+                        path="/signin"
+                        element={
+                            sessionToken || localToken ? (
+                                <Navigate to="/" replace/>
+                            ) : (
+                                <SignIn onLogin={handleLogin}/>
+                            )
+                        }
+                    />
+                    <Route path="*" element={<Navigate to="/signin" replace/>}/>
+                </Routes>
+            </BrowserRouter>
         </div>
-
     );
 }
 

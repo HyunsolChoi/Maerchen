@@ -21,6 +21,7 @@ const Popular: React.FC<HomeProps> = ({id}) => {
     const [moviesPerPage, setMoviesPerPage] = useState<number>(12); // 페이지당 영화 수
     const [viewMode, setViewMode] = useState<"table" | "infinite">("table"); // Table View / Infinite Scroll 상태
     const [isFetching, setIsFetching] = useState<boolean>(false); // 로딩 상태 (무한 스크롤)
+    const [noMoreMovies, setNoMoreMovies] = useState<boolean>(false); // 더 이상 영화가 안나옴
 
     const previousWidth = useRef<number>(window.innerWidth);
 
@@ -106,7 +107,7 @@ const Popular: React.FC<HomeProps> = ({id}) => {
     const debouncedHandleScroll = debounce(handleScroll, 200); // 200ms 디바운스
 
     const fetchMovies = async (page: number) => {
-        if (!API_KEY || isFetching) return;
+        if (!API_KEY || isFetching || noMoreMovies) return;
 
         try {
             setIsFetching(true);
@@ -114,7 +115,7 @@ const Popular: React.FC<HomeProps> = ({id}) => {
             const response = await fetch(url);
             const data: { results: Movie[] } = await response.json(); // 결과 타입 명시
 
-            if (data.results) {
+            if (data.results && data.results.length > 0) {
                 setPopularMovies((prevMovies) => [
                     ...prevMovies,
                     ...data.results.filter(
@@ -122,9 +123,10 @@ const Popular: React.FC<HomeProps> = ({id}) => {
                     ),
                 ]);
                 setCurrentPage(page);
-                console.log(`Fetching page: ${page}`);
-
+            } else if(data.results.length === 0){
+                setNoMoreMovies(true);
             }
+
         } catch (error) {
             console.error("Error fetching movies:", error);
         } finally {

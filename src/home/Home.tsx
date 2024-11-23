@@ -191,14 +191,14 @@ const MovieSection = ({
                 </div>
                 <div className={`movies-row ${scrolling ? 'no-hover' : ''}`} ref={rowRef}>
                     {movies.map((movie, index) => (
-                        <div key={`${movie.id}-${index}`} className="movie-card" onClick={() => handleToggleWish(movie)}>
+                        <div key={`${movie.id}-${index}`} className="home-movie-card" onClick={() => handleToggleWish(movie)}>
                             <img
                                 src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                                 alt={movie.title}
-                                className="movie-poster"
+                                className="home-movie-poster"
                             />
                             {wish.some((likedMovie) => likedMovie.id === movie.id) && (
-                                <i className="fa-solid fa-thumbs-up movie-liked-icon" />
+                                <i className="fa-solid fa-thumbs-up home-movie-liked-icon" />
                             )}
                         </div>
                     ))}
