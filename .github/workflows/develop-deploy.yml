@@ -2,9 +2,11 @@ name: Develop Branch CI
 
 # 실행 조건: develop 브랜치에 push 발생 시
 on:
-  push:
-    branches:
-      - develop
+  workflow_run:
+    workflows:
+      - 'Feature Branch CI'
+    types:
+      - completed
 
 jobs:
   # 1. gh-pages로 배포
