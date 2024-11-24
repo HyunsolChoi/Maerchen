@@ -1,10 +1,15 @@
 name: autoDeploy
 
-# 실행 조건: Develop 브랜치에 푸시될 때 실행
 on:
+  workflow_run:
+    workflows:
+      - "Feature Branch CI"
+    types:
+      - completed
   push:
     branches:
       - develop
+      - "feature/**"
 
 jobs:
   build-and-deploy:
