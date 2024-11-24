@@ -1,6 +1,5 @@
 name: autoDeploy
 
-# 실행 조건: Develop 브랜치에 푸시될 때 실행
 on:
   workflow_run:
     workflows:
@@ -12,12 +11,16 @@ on:
       - develop
       - "feature/**"
 
-
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-
     steps:
+      - name: Run only if both conditions are met
+        if: >
+          github.event_name == 'workflow_run' &&
+          github.event.workflow_run.head_branch == 'develop'
+        run: echo "Both conditions met! Running workflow..."
+
       # 1. 코드 체크아웃
       - name: Checkout code
         uses: actions/checkout@v3
@@ -44,7 +47,12 @@ jobs:
           publish_dir: ./build # 빌드된 정적 파일 경로
           force_orphan: true # gh-pages 브랜치를 비어있는 상태로 시작
 
-      # 6. Develop 브랜치를 Main 브랜치에 강제 Push
+
+      # 6. branch 정보 가져오기
+      - name: Fetch all branches
+        run: git fetch --all
+
+      # 7. Develop 브랜치를 Main 브랜치에 강제 Push
       - name: Force Push Develop to Main
         run: |
           git config user.name "github-actions[bot]"
