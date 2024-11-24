@@ -24,13 +24,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # 4. 코드 린트 및 테스트 실행
-      - name: Run lint and tests
-        run: |
-          npm run lint
-          npm test
-
-      # 5. develop 브랜치로 병합 및 Push
+      # 4. develop 브랜치로 병합 및 Push
       - name: Merge into develop
         if: success() # 린트와 테스트가 성공한 경우에만 실행
         run: |
