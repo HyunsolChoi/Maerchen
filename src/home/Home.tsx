@@ -150,7 +150,7 @@ const MovieSection = ({
         if (rowRef.current) {
             const { scrollLeft, scrollWidth, clientWidth } = rowRef.current;
             setIsLeftHidden(scrollLeft === 0);
-            setIsRightHidden(scrollLeft + clientWidth >= scrollWidth);
+            setIsRightHidden(scrollLeft + clientWidth + 5 >= scrollWidth);
         }
     };
 
