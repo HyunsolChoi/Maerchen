@@ -14,9 +14,17 @@ body{
     background-color: #1f1f1f;
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: 100;
+    transition: transform 0.3s ease, opacity 0.3s ease;
 }
-
+.navbar.hidden {
+    transform: translateY(-100%); /* 위로 숨기기 */
+    opacity: 0; /* 투명화 */
+}
+.navbar.visible {
+    transform: translateY(0); /* 제자리로 복귀 */
+    opacity: 1; /* 불투명 */
+}
 .navbar-logo {
     color: red;
     font-size: 2em;
@@ -43,7 +51,35 @@ body{
 }
 
 .navbar-item:hover {
-    text-decoration: underline;
+    color: gray;
+    transform: scale(1.05); /* 텍스트 살짝 확대 */
+}
+
+.navbar-item.active {
+    font-weight: bold;
+    position: relative;
+    cursor: pointer;
+    transition: color 0.3s ease, transform 0.3s ease; /* 부드러운 색상 및 크기 변화 */
+}
+
+.navbar-item.active::after {
+    content: ""; /* 하단 강조선 */
+    position: absolute;
+    bottom: -4px; /* 텍스트 아래에 여백 추가 */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%; /* 강조선 길이 */
+    height: 2px; /* 강조선 두께 */
+    background-color: white; /* 강조선 색상 */
+    transition: width 0.3s ease; /* 부드러운 강조선 애니메이션 */
+}
+
+.navbar-item.active:hover {
+    transform: scale(1.05); /* 텍스트 살짝 확대 */
+}
+
+.navbar-item.active:hover::after {
+    width: 80%; /* 강조선이 길어지는 효과 */
 }
 
 .user-icon {
@@ -70,7 +106,7 @@ body{
     padding: 10px;
     border-radius: 5px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    z-index: 10;
+    z-index: 200;
     min-width: 150px;
     text-align: left;
     cursor: default;
@@ -174,6 +210,23 @@ body{
         color: white;
         cursor: pointer;
         margin-left: 2px; /* 간격 조정 */
+    }
+
+
+    /* 모바일 효과 */
+    .dropdown-item.mobile {
+        border-radius: 5px; /* 둥근 모서리 */
+    }
+
+    .dropdown-item.mobile.active {
+        font-weight: bold; /* 텍스트 강조 */
+        color: white; /* 텍스트 색상 */
+        background-color: rgba(255, 255, 255, 0.1); /* 배경 강조 */
+        border-radius: 5px; /* 강조 시에도 모서리 유지 */
+    }
+
+    .dropdown-item.mobile.active:hover {
+        background-color: rgba(255, 255, 255, 0.2); /* 강조 배경 더 진하게 */
     }
 }
 

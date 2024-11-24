@@ -227,13 +227,19 @@ const Popular: React.FC<HomeProps> = ({id}) => {
             <div className="view-switcher">
                 <button
                     className={`view-button ${viewMode === "table" ? "active" : ""}`}
-                    onClick={() => setViewMode("table")}
+                    onClick={() => {
+                        window.scrollTo({top: 0, behavior: "smooth"});
+                        setViewMode("table");
+                    }}
                 >
                     <i className="fa-solid fa-table-cells-large"></i>
                 </button>
                 <button
                     className={`view-button ${viewMode === "infinite" ? "active" : ""}`}
-                    onClick={() => setViewMode("infinite")}
+                    onClick={() => {
+                        window.scrollTo({top: 0, behavior: "smooth"});
+                        setViewMode("infinite");
+                    }}
                 >
                     <i className="fa-solid fa-scroll"></i>
                 </button>
