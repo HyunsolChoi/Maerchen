@@ -1,12 +1,16 @@
 import {Route, Routes, Navigate, BrowserRouter} from 'react-router-dom';
-import SignIn from './signIn/SignIn';
-import Home from './home/Home';
-import Popular from './popular/Popular';
-import Wishlist from './wishlist/Wishlist';
+import {toast, ToastContainer} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // 기본 스타일
+import SignIn from './components/signIn/SignIn';
+import Home from './components/home/Home';
+import Popular from './components/popular/Popular';
+import Wishlist from './components/wishlist/Wishlist';
 import React, { useEffect, useState } from 'react';
 import './index.css'
 import Navbar from './config/reusableComponents/Navbar'
-import Search from "./search/Search";
+import Search from "./components/search/Search";
+import { validateApiKey } from './config/utils/validateApiKey';
+import {User} from "./config/interfaces";
 
 function App() {
     //세션에 저장된 정보로 인증
@@ -20,13 +24,26 @@ function App() {
         const localEmail = localStorage.getItem('localUserEmail');
         const sessionEmail = sessionStorage.getItem('sessionUserEmail');
 
+        const savedUsers = JSON.parse(localStorage.getItem('users') || '[]') as User[];
+
         if (localEmail) {
             setUsername(localEmail);
             setLocalToken(true);
+            // email 동기화 안될까봐 각각 작성
+            const foundUser = savedUsers.find(user => user.email === localEmail);
+            if(!validateApiKey(foundUser?.password || "")){
+                toast.error("API Key가 유효하지 않습니다.");
+            }
+
         } else if (sessionEmail) {
             setUsername(sessionEmail);
             setSessionToken(true);
+            const foundUser = savedUsers.find(user => user.email === localEmail);
+            if(!validateApiKey(foundUser?.password || "")){
+                toast.error("API Key가 유효하지 않습니다.");
+            }
         }
+
     }, []);
 
     const handleLogout = () => {
@@ -117,6 +134,15 @@ function App() {
                     <Route path="*" element={<Navigate to="/signin" replace/>}/>
                 </Routes>
             </BrowserRouter>
+            <ToastContainer className="toast-Container"
+                position="top-center" // 위치 설정
+                autoClose={1500}
+                hideProgressBar={true}
+                newestOnTop={true} // 최신 메시지를 위로
+                closeOnClick={true}
+                pauseOnHover={false}
+                theme = "dark"
+            />
         </div>
     );
 }

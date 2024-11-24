@@ -3,8 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './Home.css';
-import { User, Movie } from '../config/interfaces';
-import {toggleWish} from "../config/functions/toggleWish";
+import { User, Movie } from '../../config/interfaces';
+import {toggleWish} from "../../config/utils/toggleWish";
 
 interface BannerMovie{
     id: number;

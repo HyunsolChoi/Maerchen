@@ -1,13 +1,13 @@
 import React, {useState, useEffect, useRef} from 'react';
 import './Popular.css';
-import '../config/views/infiniteView.css'
-import '../config/views/tableView.css'
-import {User, Movie} from "../config/interfaces";
+import '../../config/views/infiniteView.css'
+import '../../config/views/tableView.css'
+import {User, Movie} from "../../config/interfaces";
 import { faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {toggleWish} from "../config/functions/toggleWish";
+import {toggleWish} from "../../config/utils/toggleWish";
 import debounce from "lodash/debounce";
-import Loader from "../config/reusableComponents/Loader";
+import Loader from "../../config/reusableComponents/Loader";
 
 interface HomeProps {
     id: string;

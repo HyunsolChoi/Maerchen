@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./Wishlist.css";
-import "../config/views/tableView.css"
-import { Movie } from "../config/interfaces"
+import "../../config/views/tableView.css"
+import { Movie } from "../../config/interfaces"
 
 interface HomeProps {
     id: string;

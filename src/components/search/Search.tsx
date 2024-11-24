@@ -1,9 +1,9 @@
 import React, {useState, useEffect} from 'react';
-import {User, Movie} from "../config/interfaces";
-import {toggleWish} from "../config/functions/toggleWish";
+import {User, Movie} from "../../config/interfaces";
+import {toggleWish} from "../../config/utils/toggleWish";
 import './Search.css';
 import debounce from "lodash/debounce";
-import Loader from '../config/reusableComponents/Loader';
+import Loader from '../../config/reusableComponents/Loader';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronUp} from "@fortawesome/free-solid-svg-icons";
 

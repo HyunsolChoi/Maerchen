@@ -1,0 +1,16 @@
+.toast-Container{
+    font-size: 0.9em;
+    padding: 12px;
+    top: 10px; /* 화면 상단에서 10px */
+    left: 50%; /* 화면의 중앙 */
+    width: fit-content;
+    transform: translateX(-50%); /* 수평 중앙 정렬 */
+    position: fixed; /* 뷰포트 기준 고정 */
+}
+
+
+@media(max-width: 768px) {
+    .toast-Container{
+        font-size: 0.7em;
+    }
+}
