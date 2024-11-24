@@ -1,0 +1,41 @@
+name: Feature Branch CI
+
+# 실행 조건: feature/* 브랜치에 push 발생 시
+on:
+  push:
+    branches:
+      - "feature/*"
+
+jobs:
+  lint-test-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. 코드 체크아웃
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Node.js 환경 설정
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      # 3. 의존성 설치
+      - name: Install dependencies
+        run: npm install
+
+      # 4. 코드 린트 및 테스트 실행
+      - name: Run lint and tests
+        run: |
+          npm run lint
+          npm test
+
+      # 5. develop 브랜치로 병합 및 Push
+      - name: Merge into develop
+        if: success() # 린트와 테스트가 성공한 경우에만 실행
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git checkout develop
+          git merge ${{ github.ref_name }} --no-ff --no-edit
+          git push origin develop
