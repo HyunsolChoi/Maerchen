@@ -152,3 +152,85 @@
     color: gray;
     text-decoration: underline;
 }
+
+/* updated */
+
+.agreement {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+    font-size: 14px;
+    padding: 7px 20px 0 20px;
+}
+.signupCheck{
+    margin-right: 10px;
+}
+
+.agreement .link {
+    color: #ff4500;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* 약간 어두운 투명 배경 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    cursor: pointer;
+}
+
+.modal-content {
+    background: linear-gradient(135deg, #1e1e1e, #282828); /* 부드러운 다크 그라데이션 */
+    color: #fff;
+    padding: 20px 25px;
+    border-radius: 10px;
+    width: 400px;
+    text-align: center; /* 왼쪽 정렬 */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    cursor: default;
+    animation: fadeIn 0.3s ease; /* 나타나는 애니메이션 추가 */
+}
+
+.modal-textarea {
+    pointer-events: none; /* 클릭 이벤트 비활성화 */
+    width: 100%;
+    height: 100%;
+    background: #333;
+    color: #fff;
+    border: 1px solid #444;
+    padding: 12px;
+    border-radius: 6px;
+    resize: none;
+    margin-top: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.close-button {
+    background: #ff4500;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 16px;
+}
