@@ -1,4 +1,4 @@
-name: Feature Branch CI
+name: Merge Feature to Develop
 
 on:
   push:
@@ -6,37 +6,18 @@ on:
       - "feature/**"
 
 jobs:
-  code-check-and-push:
+  merge_to_develop:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Merge into develop
-        if: success()
+      - name: Merge Feature to Develop
         run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-
-          if git fetch origin develop:develop; then
-            echo "Develop branch found and fetched."
-          else
-            echo "Develop branch not found. Creating develop branch."
-            git checkout -b develop
-            git push origin develop
-          fi
-
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout develop
-          git merge ${{ github.ref_name }} --no-ff --no-edit || true
-          git push origin develop --force
-
+          git merge ${{ github.ref_name }} --no-ff --no-edit -X theirs || true
+          git push origin develop

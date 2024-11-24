@@ -1,0 +1,28 @@
+name: Push to Main (Excluding Build Files)
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  push_to_main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Remove Build Files
+        run: |
+          rm -rf ./build # 빌드 파일 삭제
+
+      - name: Push to Main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout main
+          git pull origin main
+          git merge develop --no-ff --no-edit -X theirs || true
+          git push origin main
