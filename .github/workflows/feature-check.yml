@@ -7,12 +7,14 @@ on:
       - "feature/*"
 
 jobs:
-  lint-test-and-push:
+  code-check-and-push:
     runs-on: ubuntu-latest
     steps:
       # 1. 코드 체크아웃
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # 모든 브랜치를 가져옴
 
       # 2. Node.js 환경 설정
       - name: Setup Node.js
@@ -26,10 +28,75 @@ jobs:
 
       # 4. develop 브랜치로 병합 및 Push
       - name: Merge into develop
-        if: success() # 린트와 테스트가 성공한 경우에만 실행
+        if: success() # 모든 이전 작업이 성공한 경우 실행
         run: |
+          # Git 사용자 정보 설정
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
+
+          # 원격에서 develop 브랜치 가져오기 (없으면 생성)
+          if git fetch origin develop:develop; then
+            echo "Develop branch found and fetched."
+          else
+            echo "Develop branch not found. Creating develop branch."
+            git checkout -b develop
+            git push origin develop
+          fi
+
+          # Develop 브랜치로 병합
           git checkout develop
           git merge ${{ github.ref_name }} --no-ff --no-edit
+
+          # 병합된 Develop 브랜치 푸시
+          git push origin develop
+name: Feature Branch CI
+
+# 실행 조건: feature/* 브랜치에 push 발생 시
+on:
+  push:
+    branches:
+      - "feature/*"
+
+jobs:
+  code-check-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. 코드 체크아웃
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # 모든 브랜치를 가져옴
+
+      # 2. Node.js 환경 설정
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      # 3. 의존성 설치
+      - name: Install dependencies
+        run: npm install
+
+      # 4. develop 브랜치로 병합 및 Push
+      - name: Merge into develop
+        if: success() # 모든 이전 작업이 성공한 경우 실행
+        run: |
+          # Git 사용자 정보 설정
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+          # 원격에서 develop 브랜치 가져오기 (없으면 생성)
+          if git fetch origin develop:develop; then
+            echo "Develop branch found and fetched."
+          else
+            echo "Develop branch not found. Creating develop branch."
+            git checkout -b develop
+            git push origin develop
+          fi
+
+          # Develop 브랜치로 병합
+          git checkout develop
+          git merge ${{ github.ref_name }} --no-ff --no-edit
+
+          # 병합된 Develop 브랜치 푸시
           git push origin develop
