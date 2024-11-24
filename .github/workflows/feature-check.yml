@@ -37,5 +37,6 @@ jobs:
           fi
 
           git checkout develop
-          git merge ${{ github.ref_name }} --no-ff --no-edit
-          git push origin develop
+          git merge ${{ github.ref_name }} --no-ff --no-edit || true
+          git push origin develop --force
+

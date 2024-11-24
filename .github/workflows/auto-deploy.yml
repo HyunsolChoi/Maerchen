@@ -47,7 +47,12 @@ jobs:
           publish_dir: ./build # 빌드된 정적 파일 경로
           force_orphan: true # gh-pages 브랜치를 비어있는 상태로 시작
 
-      # 6. Develop 브랜치를 Main 브랜치에 강제 Push
+
+      # 6. branch 정보 가져오기
+      - name: Fetch all branches
+        run: git fetch --all
+
+      # 7. Develop 브랜치를 Main 브랜치에 강제 Push
       - name: Force Push Develop to Main
         run: |
           git config user.name "github-actions[bot]"
