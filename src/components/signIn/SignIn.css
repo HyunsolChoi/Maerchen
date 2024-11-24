@@ -3,11 +3,24 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-image: url('../res/background.jpg');
-    background-size: inherit;
-    background-position: center;
-    background-repeat: no-repeat;
+    background-image: none; /* 배경 이미지를 직접 설정하지 않음 */
+    position: relative; /* 가상 요소와 배경 처리 */
+    overflow: hidden; /* 블러 영역이 초과되지 않도록 숨김 */
     color: white;
+}
+
+.App::before {
+    content: '';
+    position: absolute;
+    width: 100%; /* 블러 효과 영역 확장 */
+    height: 100%; /* 화면 밖 영역까지 커버 */
+    background-image: url('../../config/res/background.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center bottom 10%;
+
+    filter: brightness(0.8) blur(7px); /* 밝기 조정과 블러 효과 */
+    z-index: 0; /* 가장 뒤쪽 배경 */
 }
 
 .background {
@@ -16,12 +29,9 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: inherit;
-    background-size: cover;
-    background-position: center;
-    filter: blur(1px);
-    z-index: 1;
+    z-index: 1; /* 배경 위에 오버레이 */
 }
+
 
 .main-logo{
     position: absolute;
@@ -233,4 +243,15 @@
     cursor: pointer;
     border-radius: 4px;
     font-size: 16px;
+}
+
+@media (max-width: 768px) {
+    .modal-textarea {
+        font-size: 12px; /* 텍스트 크기 조절 */
+    }
+    .modal-content {
+        font-size: 13px; /* 텍스트 크기 줄이기 */
+        width: 390px;
+    }
+
 }
