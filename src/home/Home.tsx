@@ -146,6 +146,7 @@ const MovieSection = ({
     const [isLeftHidden, setIsLeftHidden] = useState(true);
     const [isRightHidden, setIsRightHidden] = useState(false);
 
+    //스크롤 위치에 따라 버튼 활성화 비 활성화 전환
     const checkScrollPosition = () => {
         if (rowRef.current) {
             const { scrollLeft, scrollWidth, clientWidth } = rowRef.current;
