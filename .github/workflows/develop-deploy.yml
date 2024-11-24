@@ -2,15 +2,11 @@ name: Develop Branch CI
 
 # 실행 조건: develop 브랜치에 push 발생 시, feature workflow 의 완수 이후
 on:
-  push:
-    branches:
-      - develop
   workflow_run:
     workflows:
-      - Feature Branch CI
+      - Feature Branch CI # 정확히 트리거 워크플로우의 이름과 일치해야 함
     types:
       - completed
-
 
 jobs:
   # 1. gh-pages로 배포
