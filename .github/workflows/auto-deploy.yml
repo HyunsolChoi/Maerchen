@@ -9,12 +9,18 @@ on:
   push:
     branches:
       - develop
+      - "feature/**"
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-
     steps:
+      - name: Run only if both conditions are met
+        if: >
+          github.event_name == 'workflow_run' &&
+          github.event.workflow_run.head_branch == 'develop'
+        run: echo "Both conditions met! Running workflow..."
+
       # 1. 코드 체크아웃
       - name: Checkout code
         uses: actions/checkout@v3
