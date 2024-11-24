@@ -132,7 +132,7 @@ const Search: React.FC<HomeProps> = ({id}) => {
     };
 
     const fetchMovies = async (page: number) => {
-        //useEffect 에서 noMoreMovies를 false 로 전환 후 반영되지않는 오류 해결을 위해 추가
+        //useEffect 에서 noMoreMovies 를 false 로 전환 후 반영되지않는 오류 해결을 위해 추가
         //모든 옵션의 첫 페이지는 영화가 최소 한개는 있어서 문제없음
         if (page !== 1 && (!API_KEY || isFetching || noMoreMovies)) return;
 

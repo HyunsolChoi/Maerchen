@@ -33,13 +33,13 @@ const Wishlist: React.FC<HomeProps> = ({ id }) => {
     const updateMoviesPerPage = () => {
         const currentWidth = window.innerWidth;
 
-        const breakpoints = [450, 768, 1000, 1200];
+        const breakpoints = [480, 768, 1000, 1200];
         if (
             breakpoints.some(
                 (bp) =>
-                    (previousWidth.current < bp && currentWidth >= bp) || // breakpoint를 초과할 때
+                    (previousWidth.current < bp && currentWidth >= bp) || // breakpoint 를 초과할 때
                     (previousWidth.current >= bp && currentWidth < bp) || // breakpoint 아래로 갈 때
-                    currentWidth === bp // 화면이 정확히 해당 breakpoint일 때
+                    currentWidth === bp // 화면이 정확히 해당 breakpoint 일 때
             )
         ) {
             setCurrentPage(1);
@@ -47,12 +47,12 @@ const Wishlist: React.FC<HomeProps> = ({ id }) => {
 
         let cols = 6; // 기본 열 수
 
-        if (currentWidth <= 450) {
+        if (currentWidth <= 480) {
             cols = 3;
-            setMoviesPerPage(cols * 3);
+            setMoviesPerPage(cols * 4);
         } else if (currentWidth <= 768) {
-            cols = 3;
-            setMoviesPerPage(cols * 3);
+            cols = 4;
+            setMoviesPerPage(cols * 4);
         } else if (currentWidth <= 1000) {
             cols = 4;
             setMoviesPerPage(cols * 3);

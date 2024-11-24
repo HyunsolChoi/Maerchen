@@ -137,7 +137,7 @@ const Popular: React.FC<HomeProps> = ({id}) => {
     const updateMoviesPerPage = () => {
         const currentWidth = window.innerWidth;
 
-        const breakpoints = [450, 768, 1000, 1200];
+        const breakpoints = [480, 768, 1000, 1200];
         if (
             breakpoints.some(
                 (bp) =>
@@ -153,12 +153,12 @@ const Popular: React.FC<HomeProps> = ({id}) => {
 
         let cols = 6; // 기본 열 수
 
-        if (currentWidth <= 450) {
+        if (currentWidth <= 480) {
             cols = 3;
-            setMoviesPerPage(cols * 3);
+            setMoviesPerPage(cols * 4);
         } else if (currentWidth <= 768) {
-            cols = 3;
-            setMoviesPerPage(cols * 3);
+            cols = 4;
+            setMoviesPerPage(cols * 4);
         } else if (currentWidth <= 1000) {
             cols = 4;
             setMoviesPerPage(cols * 3);
