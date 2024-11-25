@@ -1,5 +1,5 @@
 // utils/wishUtils.ts
-import { Movie } from "../interfaces"; // Movie 타입 경로에 맞게 수정
+import {Movie} from "../interfaces"; // Movie 타입 경로에 맞게 수정
 
 export const toggleWish = (
     movie: Movie,
@@ -16,6 +16,7 @@ export const toggleWish = (
                 id: movie.id,
                 title: movie.title,
                 poster_path: movie.poster_path,
+                genre_ids: movie.genre_ids || [], // genres가 없으면 빈 배열로 처리
             },
         ]; // 새로 추가
 

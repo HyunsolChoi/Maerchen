@@ -25,12 +25,14 @@ const Home: React.FC<HomeProps> = ({ id }) => {
         latestMovies: Movie[];
         actionMovies: Movie[];
         animationMovies: Movie[];
+        favoriteMovies: Movie[] | null;
     }>({
         topMovie: null,
         popularMovies: [],
         latestMovies: [],
         actionMovies: [],
         animationMovies: [],
+        favoriteMovies: [],
     });
 
     // 찜 목록 상태 (wish)
@@ -53,6 +55,20 @@ const Home: React.FC<HomeProps> = ({ id }) => {
             window.location.replace('/#/signin');
             return;
         }
+
+        const storedWishlist = localStorage.getItem(`${id}_wish`);
+        let favoriteGenre: number = 0;
+
+        if(storedWishlist)
+        {
+            try {
+                const movies: Movie[] = JSON.parse(storedWishlist);
+                favoriteGenre = getMostFrequentGenre(movies); // 상태에 영화 데이터 저장
+            } catch (error) {
+                console.error("로컬 스토리지 데이터 파싱 오류:", error);
+            }
+        }
+
         const fetchMovies = async () => {
             try {
                 const [
@@ -62,6 +78,7 @@ const Home: React.FC<HomeProps> = ({ id }) => {
                     latestPage2,
                     action,
                     animation,
+                    favorite, // favoriteGenre 조건에 따른 결과
                 ] = await Promise.all([
                     fetchBannerMovie(`https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=ko-KR`),
                     fetchMoviesByCategory(`https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=ko-KR`),
@@ -69,6 +86,9 @@ const Home: React.FC<HomeProps> = ({ id }) => {
                     fetchMoviesByCategory(`https://api.themoviedb.org/3/movie/now_playing?api_key=${API_KEY}&language=ko-KR&page=2`),
                     fetchMoviesByCategory(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_genres=28&language=ko-KR`),
                     fetchMoviesByCategory(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_genres=16&language=ko-KR`),
+                    favoriteGenre !== 0
+                        ? fetchMoviesByCategory(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_genres=${favoriteGenre}&language=ko-KR&page=2`) // 중복 최소화 위해 2페이지
+                        : null, // favoriteGenre 가 0일 경우 실행 안 함
                 ]);
 
                 const uniqueLatestMovies = [...latestPage1, ...latestPage2].filter(
@@ -81,14 +101,44 @@ const Home: React.FC<HomeProps> = ({ id }) => {
                     latestMovies: uniqueLatestMovies.slice(0, 20),
                     actionMovies: action.slice(0, 20),
                     animationMovies: animation.slice(0, 20),
+                    favoriteMovies: favorite ? favorite.slice(0, 20) : null, // 조건부 설정
                 });
             } catch (error) {
                 console.error('Error fetching movies:', error);
             }
         };
         fetchMovies();
-    }, [API_KEY]);
+    }, [id, API_KEY]);
 
+
+    //사용자의 관심 장르 알아내기
+    const getMostFrequentGenre = (wishList: Movie[]): number => {
+        if (!wishList) {
+            return 0; // 데이터가 없을 경우 처리
+        }
+
+        // 모든 genre_ids를 하나의 배열로 병합
+        const allGenreIds = wishList.flatMap((movie) => movie.genre_ids);
+
+        // 빈도수 계산
+        const genreCount: Record<number, number> = {};
+        allGenreIds.forEach((id) => {
+            genreCount[id] = (genreCount[id] || 0) + 1;
+        });
+
+        // 가장 빈도수가 높은 숫자 찾기
+        let mostFrequentGenre: number = 0;
+        let maxCount = 0;
+
+        Object.entries(genreCount).forEach(([genreId, count]) => {
+            if (count > maxCount) {
+                maxCount = count;
+                mostFrequentGenre = parseInt(genreId, 10);
+            }
+        });
+
+        return mostFrequentGenre;
+    };
 
     const fetchBannerMovie= async (url: string): Promise<BannerMovie[]> => {
         const response = await fetch(url);
@@ -126,6 +176,14 @@ const Home: React.FC<HomeProps> = ({ id }) => {
             <MovieSection title="최신 영화" movies={movieData.latestMovies} wish={wish} handleToggleWish={handleToggleWish}/>
             <MovieSection title="액션 영화" movies={movieData.actionMovies} wish={wish} handleToggleWish={handleToggleWish}/>
             <MovieSection title="애니메이션 영화" movies={movieData.animationMovies} wish={wish} handleToggleWish={handleToggleWish}/>
+            {movieData.favoriteMovies && (
+                <MovieSection
+                    title="나의 선호 장르"
+                    movies={movieData.favoriteMovies}
+                    wish={wish}
+                    handleToggleWish={handleToggleWish}
+                />
+            )}
         </div>
     );
 };
