@@ -63,7 +63,6 @@ const Wishlist: React.FC<HomeProps> = ({ id }) => {
             cols = 6;
             setMoviesPerPage(cols * 2);
         }
-
         previousWidth.current = currentWidth;
     };
 

@@ -2,7 +2,7 @@
 .table-movies-container {
     display: grid; /* CSS Grid 사용 */
     grid-template-columns: repeat(6, 150px); /* 반응형 열 구성 */
-    grid-template-rows: repeat(2, 260px); /* 2행, 제목 공간 포함 */
+    grid-template-rows: repeat(auto-fit, 260px); /* 2행, 제목 공간 포함 */
     gap: 20px; /* 카드 간격 고정 */
     justify-content: center; /* 중앙 정렬 */
     width: auto; /* 콘텐츠 크기에 따라 자동 조정 */
@@ -73,14 +73,14 @@
 @media (max-width: 1000px) {
     .table-movies-container {
         grid-template-columns: repeat(4, 150px);
-        grid-template-rows: repeat(3, 260px);
+        grid-template-rows: repeat( auto-fit, 260px);
     }
 }
 
 @media (max-width: 768px) {
     .table-movies-container {
         grid-template-columns: repeat(4, 106px);
-        grid-template-rows: repeat(4, 193px);
+        grid-template-rows: repeat(auto-fit, 193px);
         gap: 10px;
         padding: 0 5px;
         margin: 0;
