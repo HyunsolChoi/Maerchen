@@ -91,6 +91,7 @@ const Home: React.FC<HomeProps> = ({ id }) => {
                         : null, // favoriteGenre 가 0일 경우 실행 안 함
                 ]);
 
+                //최신영화는 인기 영화와 안겹치도록
                 const uniqueLatestMovies = [...latestPage1, ...latestPage2].filter(
                     (latestMovie) => !popular.some((popularMovie) => popularMovie.id === latestMovie.id)
                 );

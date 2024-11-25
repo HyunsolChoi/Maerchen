@@ -135,13 +135,13 @@ function App() {
                 </Routes>
             </BrowserRouter>
             <ToastContainer className="toast-Container"
-                position="top-center" // 위치 설정
-                autoClose={1500}
-                hideProgressBar={true}
-                newestOnTop={true} // 최신 메시지를 위로
-                closeOnClick={true}
-                pauseOnHover={false}
-                theme = "dark"
+                            position="top-center" // 위치 설정
+                            autoClose={1500}
+                            hideProgressBar={true}
+                            newestOnTop={true} // 최신 메시지를 위로
+                            closeOnClick={true}
+                            pauseOnHover={false}
+                            theme = "dark"
             />
         </div>
     );
