@@ -144,7 +144,7 @@ function SignIn({ onLogin }: SignInProps) {
                                     <input type="checkbox" checked={signUpcheck}
                                            className="signupCheck" onChange={(e) => setSignUpCheck(e.target.checked)}
                                     />
-                                    <span className="link" onClick={() => setShowModal(true)}>기본 사항</span>을 충분히 인지하였습니다.
+                                    <span className="link" onClick={() => setShowModal(true)}>세부 사항</span>을 충분히 인지하였습니다.
                                 </label>
                             </div>
                         </>
@@ -172,7 +172,7 @@ function SignIn({ onLogin }: SignInProps) {
             {showModal && (
                 <div className="modal-overlay" onClick={() => setShowModal(false)}>
                     <div className="modal-content">
-                        <h3>기본 사항</h3>
+                        <h3>세부 사항</h3>
                         <textarea
                             className="modal-textarea"
                             defaultValue={`- 비밀번호는 TMDB의 API KEY로 설정해야합니다.\n- 입력된 정보는 로컬 스토리지에 저장됩니다.`}
