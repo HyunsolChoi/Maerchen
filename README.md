@@ -104,6 +104,16 @@ To run the test suite, execute:
 ## Folder Structure
 
 ```plaintext
+.github/
+└── workflows/
+    ├── auto-deploy.yml        # Automates building, Deploying GitHub Pages, Synchronizing Main
+    ├── develop-to-main.yml    # Handles merging from develop to main branch
+    └── feature-check.yml      # Automatically merges feature branches into the develop branch
+public/
+├── 404.html                   # Custom 404 error page
+├── favicon.ico                # Favicon for the website
+├── index.html                 # Main HTML file for the React application
+└── robots.txt                 # SEO configuration and web crawler instructions
 src/
 ├── components/                # Page-specific components
 │   ├── home/                  # Components related to the Home page
