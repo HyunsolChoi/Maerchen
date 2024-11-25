@@ -197,10 +197,11 @@ In this application, the TMDB API key also serves as the **password** for user a
 ### Screenshots
 Below are some screenshots showcasing the key features of **Maerchen**:
 
-1**Sign-In Page**
+1. **Sign-In Page**
    ![Sign-In Page](src/signin.png)
 
-2**Home Page**
+   
+2. **Home Page**
    ![Home Page](src/home.png)
 
 
