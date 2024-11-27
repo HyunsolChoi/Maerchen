@@ -5,8 +5,12 @@
   <script type="text/javascript">
     (function() {
       var currentPath = window.location.pathname;
+
       var newUrl = '/Maerchen' + currentPath.replace('/Maerchen', '');
-      window.history.replaceState(null, null, newUrl);
+
+      if (window.location.pathname !== newUrl) {
+        window.history.replaceState(null, null, newUrl);
+      }
     })();
   </script>
 </head>
