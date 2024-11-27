@@ -1,8 +1,15 @@
 <!DOCTYPE html>
+<html>
 <head>
-  <meta http-equiv="refresh" content="0; url=./">
+  <meta http-equiv="refresh" content="0; url=./index.html">
+  <script type="text/javascript">
+    (function() {
+      var currentPath = window.location.pathname;
+      var newUrl = '/Maerchen' + currentPath.replace('/Maerchen', '');
+      window.history.replaceState(null, null, newUrl);
+    })();
+  </script>
 </head>
 <body>
-
 </body>
 </html>
