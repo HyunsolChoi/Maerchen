@@ -29,6 +29,11 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
     const [signUpcheck, setSignUpCheck] = useState<boolean>(false);
 
     useEffect(() => {
+        //test
+        console.log(process.env.REACT_APP_REDIRECT_URI);
+        console.log(process.env.REACT_APP_KAKAO_JS_KEY);
+        console.log(process.env.REACT_APP_TMDB_API_KEY);
+
         const script = document.createElement('script');
         script.src = 'https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js';
         script.integrity = process.env.REACT_APP_KAKAO_SDK_INTEGRITY || '';
@@ -38,11 +43,6 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
                 window.Kakao.init(process.env.REACT_APP_KAKAO_JS_KEY); // JavaScript 키 초기화
                 console.log('Kakao SDK 초기화 완료'); // 확인용 로그
             }
-
-            //test
-            console.log(process.env.REACT_APP_REDIRECT_URI);
-            console.log(process.env.REACT_APP_KAKAO_JS_KEY);
-            console.log(process.env.REACT_APP_TMDB_API_KEY);
 
         };
         document.head.appendChild(script);
