@@ -20,6 +20,13 @@ jobs:
           github.event_name == 'workflow_run' &&
           github.event.workflow_run.head_branch == 'develop'
         run: echo "Both conditions met! Running workflow..."
+      # 0. env
+      - name: Create .env file
+        run: | 
+          echo REACT_APP_TMDB_API_KEY=${{ secrets.MAERCHEN_KEYS }} >> .env
+          echo REACT_APP_KAKAO_JS_KEY=${{ secrets.MAERCHEN_KEYS }} >> .env
+          echo REACT_APP_KAKAO_SDK_INTEGRITY=${{ secrets.MAERCHEN_KEYS }} >> .env
+          echo REACT_APP_REDIRECT_URI=${{ secrets.MAERCHEN_KEYS }} >> .env
 
       # 1. 코드 체크아웃
       - name: Checkout code
@@ -37,13 +44,7 @@ jobs:
 
       # 4. 빌드 실행
       - name: Build project
-        env:
-          REACT_APP_TMDB_API_KEY: ${{ secrets.REACT_APP_TMDB_API_KEY }}
-          REACT_APP_KAKAO_JS_KEY: ${{ secrets.REACT_APP_KAKAO_JS_KEY }}
-          REACT_APP_KAKAO_SDK_INTEGRITY: ${{ secrets.REACT_APP_KAKAO_SDK_INTEGRITY }}
-          REACT_APP_REDIRECT_URI: ${{ secrets.REACT_APP_REDIRECT_URI }}
         run: npm run build
-        continue-on-error: true
 
       # 5. gh-pages 브랜치로 배포
       - name: Deploy to GitHub Pages
@@ -52,6 +53,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }} # GitHub 제공 토큰
           publish_dir: ./build # 빌드된 정적 파일 경로
           force_orphan: true # gh-pages 브랜치를 비어있는 상태로 시작
+
 
       # 6. branch 정보 가져오기
       - name: Fetch all branches
