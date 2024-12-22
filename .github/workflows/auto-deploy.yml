@@ -25,11 +25,10 @@ jobs:
         run: echo "" > .env
 
       - name: Create .env file
-        run: | 
-          echo "REACT_APP_TMDB_API_KEY=${{ secrets.REACT_APP_TMDB_API_KEY }}" >> .env
-          echo "REACT_APP_KAKAO_JS_KEY=${{ secrets.REACT_APP_KAKAO_JS_KEY }}" >> .env
-          echo "REACT_APP_KAKAO_SDK_INTEGRITY=${{ secrets.REACT_APP_KAKAO_SDK_INTEGRITY }}" >> .env
-          echo "REACT_APP_REDIRECT_URI=${{ secrets.REACT_APP_REDIRECT_URI }}" >> .env
+        run: |
+          echo "REACT_APP_TMDB_API_KEY=REACT_APP_TMDB_API_KEY" >> .env
+        env:
+          REACT_APP_TMDB_API_KEY: ${{secrets.REACT_APP_TMDB_API_KEY}}
 
       # 1. 코드 체크아웃
       - name: Checkout code
