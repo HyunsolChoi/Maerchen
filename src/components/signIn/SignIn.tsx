@@ -328,10 +328,10 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
                                 alt="카카오 로그인 버튼"
                             />
                         </a>
-                        <h1>{process.env.REACT_APP_TMDB_API_KEY}</h1>
-                        <h1>{process.env.REACT_APP_KAKAO_JS_KEY}</h1>
-                        <h1>{process.env.REACT_APP_KAKAO_SDK_INTEGRITY}</h1>
-                        <h1>{process.env.REACT_APP_REDIRECT_URI}</h1>
+                        <h1>{"TEST"+ process.env.REACT_APP_TMDB_API_KEY}</h1>
+                        <h1>{"TEST"+ process.env.REACT_APP_KAKAO_JS_KEY}</h1>
+                        <h1>{"TEST"+ process.env.REACT_APP_KAKAO_SDK_INTEGRITY}</h1>
+                        <h1>{"TEST"+ process.env.REACT_APP_REDIRECT_URI}</h1>
                     </div>
                 )}
             </div>
