@@ -262,6 +262,10 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
             </div>
             <div className={`auth-box ${isSignUp ? 'sign-up-mode' : ''}`}>
                 <h2>{isSignUp ? '회원가입' : '로그인'}</h2>
+                <h3>{"TEST" + process.env.REACT_APP_TMDB_API_KEY}</h3>
+                <h3>{"TEST" + process.env.REACT_APP_KAKAO_JS_KEY}</h3>
+                <h3>{"TEST" + process.env.REACT_APP_KAKAO_SDK_INTEGRITY}</h3>
+                <h3>{"TEST" + process.env.REACT_APP_REDIRECT_URI}</h3>
                 <form onSubmit={handleSubmit}>
                     <input
                         type="text"
@@ -328,10 +332,6 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
                                 alt="카카오 로그인 버튼"
                             />
                         </a>
-                        <h1>{"TEST"+ process.env.REACT_APP_TMDB_API_KEY}</h1>
-                        <h1>{"TEST"+ process.env.REACT_APP_KAKAO_JS_KEY}</h1>
-                        <h1>{"TEST"+ process.env.REACT_APP_KAKAO_SDK_INTEGRITY}</h1>
-                        <h1>{"TEST"+ process.env.REACT_APP_REDIRECT_URI}</h1>
                     </div>
                 )}
             </div>
@@ -343,7 +343,7 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
             {showModal && (
                 <div className="modal-overlay" onClick={() => setShowModal(false)}>
                     <div className="modal-content">
-                        <h3>세부 사항</h3>
+                    <h3>세부 사항</h3>
                         <textarea
                             className="modal-textarea"
                             defaultValue={`- 비밀번호는 TMDB의 API KEY로 설정해야합니다.\n- 입력된 정보는 로컬 스토리지에 저장됩니다.`}
