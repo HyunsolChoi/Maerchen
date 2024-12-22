@@ -42,7 +42,12 @@ jobs:
           REACT_APP_KAKAO_JS_KEY: ${{ secrets.REACT_APP_KAKAO_JS_KEY }}
           REACT_APP_KAKAO_SDK_INTEGRITY: ${{ secrets.REACT_APP_KAKAO_SDK_INTEGRITY }}
           REACT_APP_REDIRECT_URI: ${{ secrets.REACT_APP_REDIRECT_URI }}
-        run: npm run build
+        run: |
+          if [ -z "${REACT_APP_TMDB_API_KEY}" ] || [ -z "${REACT_APP_KAKAO_JS_KEY}" ] || [ -z "${REACT_APP_KAKAO_SDK_INTEGRITY}" ] || [ -z "${REACT_APP_REDIRECT_URI}" ]; then
+            echo "Error: One or more environment variables are missing."
+            exit 1
+          fi
+          npm run build
 
       # 5. gh-pages 브랜치로 배포
       - name: Deploy to GitHub Pages
