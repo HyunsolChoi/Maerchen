@@ -23,6 +23,16 @@
     z-index: 0; /* 가장 뒤쪽 배경 */
 }
 
+.kakao-login-section {
+    margin-top: 20px; /* 위 요소와의 간격 */
+    text-align: center; /* 중앙 정렬 */
+}
+.kakao-login-text {
+    margin-bottom: 10px; /* 버튼과 텍스트 사이 간격 */
+    font-size: 16px;
+    font-weight: bold;
+}
+
 .background {
     position: absolute;
     top: 0;

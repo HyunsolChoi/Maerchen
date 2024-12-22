@@ -15,6 +15,7 @@ import {User} from "./config/interfaces";
 function App() {
     //세션에 저장된 정보로 인증
     const [sessionToken, setSessionToken] = useState(false);
+    const [kakaoToken, setKakaoToken] = useState(false);
     //saveLogin 체크 시 로컬 스토리지에 인증 정보 저장
     const [localToken, setLocalToken] = useState(false);
     const [username, setUsername] = useState<string>('Guest');
@@ -23,6 +24,7 @@ function App() {
     useEffect(() => {
         const localEmail = localStorage.getItem('localUserEmail');
         const sessionEmail = sessionStorage.getItem('sessionUserEmail');
+        const isKakaoLogin = sessionStorage.getItem('isKakaoLogin');
 
         const savedUsers = JSON.parse(localStorage.getItem('users') || '[]') as User[];
 
@@ -34,7 +36,6 @@ function App() {
             if(!validateApiKey(foundUser?.password || "")){
                 toast.error("API Key가 유효하지 않습니다.");
             }
-
         } else if (sessionEmail) {
             setUsername(sessionEmail);
             setSessionToken(true);
@@ -42,22 +43,79 @@ function App() {
             if(!validateApiKey(foundUser?.password || "")){
                 toast.error("API Key가 유효하지 않습니다.");
             }
+        } else if(isKakaoLogin){
+            setKakaoToken(true);
+            // 카카오 로그인 관련 코드
+            checkAccessTokenValidity();
+        }
+    }, []);
+
+    const checkAccessTokenValidity = async () => {
+        const token = sessionStorage.getItem('kakaoAccessToken');
+        if (!token) {
+            toast.error('Access Token이 없습니다.');
+            return false;
         }
 
-    }, []);
+        try {
+            const response = await fetch('https://kapi.kakao.com/v1/user/access_token_info', {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`, // Access Token 추가
+                },
+            });
+
+            if (response.ok) {
+                return true; // 유효한 토큰
+            } else {
+                toast.error('Access Token이 유효하지 않습니다.');
+                handleLogout();
+                return false; // 유효하지 않은 토큰
+            }
+        } catch (error) {
+            toast.error('Access Token 유효성 확인 중 오류 발생');
+            return false;
+        }
+    };
+
 
     const handleLogout = () => {
         setSessionToken(false);
         setLocalToken(false);
+        setKakaoToken(false);
+        if(kakaoToken){
+            sessionStorage.removeItem('kakaoAccessToken');
+            sessionStorage.removeItem('kakaoPK');
+            sessionStorage.removeItem('kakaoName');
+            const kakaoPK =  sessionStorage.getItem('kakaoPK');
+            sessionStorage.removeItem('kakaoPK');
+
+            // 카카오 유저의 계정 로컬에서 삭제 ( 필터링 후 재저장 )
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const updatedUsers = users.filter((user: User) => user.email !== kakaoPK);
+            localStorage.setItem('users', JSON.stringify(updatedUsers));
+
+            window.Kakao.Auth.logout();
+        }
+        sessionStorage.removeItem('isKakaoLogin');
         sessionStorage.removeItem('sessionUserEmail');
         localStorage.removeItem('localUserEmail'); // 저장된 이메일 삭제, 토큰 삭제와 같음
         setUsername('Guest');
         window.location.reload();
     };
 
+    const handleKakaoLogin = () => {
+        const kakaoPK = sessionStorage.getItem('kakaoPK'); // 유저 이름 + 유저 프사
+        if(kakaoPK){
+            setUsername(kakaoPK);
+            setKakaoToken(true);
+        }
+    }
+
     const handleLogin = (saveLogin: boolean) => {
         // 로그인 페이지에서 세션에 저장하므로 handleLogin 실행 시 세션에 이메일 저장되어있음.
         const tmp = sessionStorage.getItem('sessionUserEmail');
+
         if(tmp){
             setUsername(tmp);
             setSessionToken(true);
@@ -84,7 +142,7 @@ function App() {
                     <Route
                         path="/"
                         element={
-                            sessionToken || localToken ? (
+                            sessionToken || localToken || kakaoToken ? (
                                 <Home id={username} key={key}/>
                             ) : (
                                 <Navigate to="/signin" replace/>
@@ -94,7 +152,7 @@ function App() {
                     <Route
                         path="/popular"
                         element={
-                            sessionToken || localToken ? (
+                            sessionToken || localToken || kakaoToken ? (
                                 <Popular id={username} key={key}/>
                             ) : (
                                 <Navigate to="/signin" replace/>
@@ -104,7 +162,7 @@ function App() {
                     <Route
                         path="/wishlist"
                         element={
-                            sessionToken || localToken ? (
+                            sessionToken || localToken || kakaoToken ? (
                                 <Wishlist id={username} key={key}/>
                             ) : (
                                 <Navigate to="/signin" replace/>
@@ -114,7 +172,7 @@ function App() {
                     <Route
                         path="/search"
                         element={
-                            sessionToken || localToken ? (
+                            sessionToken || localToken || kakaoToken ? (
                                 <Search id={username} key={key}/>
                             ) : (
                                 <Navigate to="/signin" replace/>
@@ -124,10 +182,10 @@ function App() {
                     <Route
                         path="/signin"
                         element={
-                            sessionToken || localToken ? (
+                            sessionToken || localToken || kakaoToken ? (
                                 <Navigate to="/" replace/>
                             ) : (
-                                <SignIn onLogin={handleLogin}/>
+                                <SignIn onLogin={handleLogin} onKakaoLogin={handleKakaoLogin} />
                             )
                         }
                     />

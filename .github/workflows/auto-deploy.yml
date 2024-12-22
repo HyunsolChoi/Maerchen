@@ -37,6 +37,11 @@ jobs:
 
       # 4. 빌드 실행
       - name: Build project
+        env:
+          REACT_APP_TMDB_API_KEY: ${{ secrets.REACT_APP_TMDB_API_KEY }}
+          REACT_APP_KAKAO_JS_KEY: ${{ secrets.REACT_APP_KAKAO_JS_KEY }}
+          REACT_APP_KAKAO_SDK_INTEGRITY: ${{ secrets.REACT_APP_KAKAO_SDK_INTEGRITY }}
+          REACT_APP_REDIRECT_URI: ${{ secrets.REACT_APP_REDIRECT_URI }}
         run: npm run build
 
       # 5. gh-pages 브랜치로 배포

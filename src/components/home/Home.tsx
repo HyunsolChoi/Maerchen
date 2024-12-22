@@ -46,6 +46,7 @@ const Home: React.FC<HomeProps> = ({ id }) => {
     });
 
     const savedUsers = JSON.parse(localStorage.getItem('users') || '[]') as User[];
+
     const foundUser = savedUsers.find(user => user.email === id);
     const API_KEY = foundUser?.password;
 
