@@ -38,6 +38,12 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
                 window.Kakao.init(process.env.REACT_APP_KAKAO_JS_KEY); // JavaScript 키 초기화
                 console.log('Kakao SDK 초기화 완료'); // 확인용 로그
             }
+
+            //test
+            console.log(process.env.REACT_APP_REDIRECT_URI);
+            console.log(process.env.REACT_APP_KAKAO_JS_KEY);
+            console.log(process.env.REACT_APP_TMDB_API_KEY);
+
         };
         document.head.appendChild(script);
 
@@ -149,15 +155,6 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
     };
 
     const loginWithKakao = () => {
-        console.log(process.env.REACT_APP_REDIRECT_URI);
-        console.log(process.env.REACT_APP_KAKAO_JS_KEY);
-        console.log(process.env.REACT_APP_TMDB_API_KEY);
-
-        while(1){
-            //test
-        }
-
-        // eslint-disable-next-line no-unreachable
         if (window.Kakao) {
             window.Kakao.Auth.authorize({
                 redirectUri: process.env.REACT_APP_REDIRECT_URI || '',
