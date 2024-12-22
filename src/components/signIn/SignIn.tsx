@@ -29,11 +29,6 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
     const [signUpcheck, setSignUpCheck] = useState<boolean>(false);
 
     useEffect(() => {
-        //test
-        console.log(process.env.REACT_APP_REDIRECT_URI);
-        console.log(process.env.REACT_APP_KAKAO_JS_KEY);
-        console.log(process.env.REACT_APP_TMDB_API_KEY);
-
         const script = document.createElement('script');
         script.src = 'https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js';
         script.integrity = process.env.REACT_APP_KAKAO_SDK_INTEGRITY || '';
@@ -333,6 +328,10 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
                                 alt="카카오 로그인 버튼"
                             />
                         </a>
+                        <h1>{process.env.REACT_APP_TMDB_API_KEY}</h1>
+                        <h1>{process.env.REACT_APP_KAKAO_JS_KEY}</h1>
+                        <h1>{process.env.REACT_APP_KAKAO_SDK_INTEGRITY}</h1>
+                        <h1>{process.env.REACT_APP_REDIRECT_URI}</h1>
                     </div>
                 )}
             </div>
