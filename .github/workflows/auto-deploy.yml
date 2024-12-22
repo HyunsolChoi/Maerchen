@@ -21,12 +21,15 @@ jobs:
           github.event.workflow_run.head_branch == 'develop'
         run: echo "Both conditions met! Running workflow..."
       # 0. env
+      - name: Reset .env file
+        run: echo "" > .env
+
       - name: Create .env file
         run: | 
-          echo REACT_APP_TMDB_API_KEY=${{ secrets.REACT_APP_TMDB_API_KEY }} >> .env
-          echo REACT_APP_KAKAO_JS_KEY=${{ secrets.REACT_APP_KAKAO_JS_KEY }} >> .env
-          echo REACT_APP_KAKAO_SDK_INTEGRITY=${{ secrets.REACT_APP_KAKAO_SDK_INTEGRITY }} >> .env
-          echo REACT_APP_REDIRECT_URI=${{ secrets.REACT_APP_REDIRECT_URI }} >> .env
+          echo "REACT_APP_TMDB_API_KEY=${{ secrets.REACT_APP_TMDB_API_KEY }}" >> .env
+          echo "REACT_APP_KAKAO_JS_KEY=${{ secrets.REACT_APP_KAKAO_JS_KEY }}" >> .env
+          echo "REACT_APP_KAKAO_SDK_INTEGRITY=${{ secrets.REACT_APP_KAKAO_SDK_INTEGRITY }}" >> .env
+          echo "REACT_APP_REDIRECT_URI=${{ secrets.REACT_APP_REDIRECT_URI }}" >> .env
 
       # 1. 코드 체크아웃
       - name: Checkout code
