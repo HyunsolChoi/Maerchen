@@ -46,11 +46,11 @@ function App() {
         } else if(isKakaoLogin){
             setKakaoToken(true);
             // 카카오 로그인 관련 코드
-            checkAccessTokenValidity();
+
         }
     }, []);
 
-    const checkAccessTokenValidity = async () => {
+    /*const checkAccessTokenValidity = async () => {
         const token = sessionStorage.getItem('kakaoAccessToken');
         if (!token) {
             toast.error('Access Token이 없습니다.');
@@ -76,7 +76,7 @@ function App() {
             toast.error('Access Token 유효성 확인 중 오류 발생');
             return false;
         }
-    };
+    };*/
 
 
     const handleLogout = () => {

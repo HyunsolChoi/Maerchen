@@ -47,37 +47,7 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
 
     }, []);
 
-    const [token, setToken] = useState<string | null>(null);
-
-    useEffect(() => {
-        const displayToken = () => {
-            const token = getCookie('authorize-access-token');
-            if (token) {
-                window.Kakao.Auth.setAccessToken(token);
-                window.Kakao.Auth.getStatusInfo()
-                    .then((res: any) => {
-                        if (res.status === 'connected') {
-                            setToken(window.Kakao.Auth.getAccessToken());
-                        }
-                    })
-                    .catch(() => {
-                        window.Kakao.Auth.setAccessToken(null);
-                    });
-            }
-        };
-
-        const getCookie = (name: string): string | null => {
-            const parts = document.cookie.split(`${name}=`);
-            if (parts.length === 2) {
-                return parts[1].split(';')[0];
-            }
-            return null;
-        };
-
-        displayToken();
-    }, []);
-
-    const fetchAccessTokenAndUserInfo = async (authCode: string) => {
+    /*const fetchAccessTokenAndUserInfo = async (authCode: string) => {
         try {
             // Access Token 발급
             const tokenResponse = await fetch('https://kauth.kakao.com/oauth/token', {
@@ -138,9 +108,9 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
             console.error(error);
             throw error;
         }
-    };
+    };*/
 
-    const handleRedirectAndProcess = async () => {
+   /* const handleRedirectAndProcess = async () => {
         const urlParams = new URLSearchParams(window.location.search);
         const authCode = urlParams.get('code'); // Authorization Code 추출
 
@@ -160,7 +130,8 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
                 console.error(error);
             }
         }
-    };
+    };*/
+
     const loginWithKakaoTest = () => {
         // Kakao 객체와 초기화 여부 확인
         if (window.Kakao && window.Kakao.isInitialized()) {
@@ -349,6 +320,7 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
                 {!isSignUp && (
                     <div className="kakao-login-section">
                         <p className="kakao-login-text">카카오로 임시 로그인 하기</p>
+                        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                         <a className="kakao-login-btn" onClick={loginWithKakao}>
                             <img
                                 src="https://k.kakaocdn.net/14/dn/btroDszwNrM/I6efHub1SN5KCJqLm1Ovx1/o.jpg"
