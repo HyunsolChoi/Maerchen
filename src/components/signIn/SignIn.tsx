@@ -57,6 +57,7 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
         if (code) {
             getAccessToken(code); // Access Token 요청
         }
+        // eslint-disable-next-line
     }, [code]);
 
     // Access Token 발급

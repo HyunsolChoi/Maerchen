@@ -61,6 +61,7 @@ function App() {
         };
 
         initializeUser(); // 비동기 함수 호출
+        // eslint-disable-next-line
     }, []);
 
     const checkAccessTokenValidity = async () => {
