@@ -22,35 +22,48 @@ function App() {
     const [key, setKey] = useState(0);
 
     useEffect(() => {
-        const localEmail = localStorage.getItem('localUserEmail');
-        const sessionEmail = sessionStorage.getItem('sessionUserEmail');
-        const isKakaoLogin = sessionStorage.getItem('isKakaoLogin');
+        const initializeUser = async () => {
+            const localEmail = localStorage.getItem('localUserEmail');
+            const sessionEmail = sessionStorage.getItem('sessionUserEmail');
+            const isKakaoLogin = sessionStorage.getItem('kakaoAccessToken');
 
-        const savedUsers = JSON.parse(localStorage.getItem('users') || '[]') as User[];
+            const savedUsers = JSON.parse(localStorage.getItem('users') || '[]') as User[];
 
-        if (localEmail) {
-            setUsername(localEmail);
-            setLocalToken(true);
-            // email 동기화 안될까봐 각각 작성
-            const foundUser = savedUsers.find(user => user.email === localEmail);
-            if(!validateApiKey(foundUser?.password || "")){
-                toast.error("API Key가 유효하지 않습니다.");
+            if (localEmail) {
+                setUsername(localEmail);
+                setLocalToken(true);
+                // email 동기화 안될까봐 각각 작성
+                const foundUser = savedUsers.find(user => user.email === localEmail);
+                if (! await validateApiKey(foundUser?.password || "")) {
+                    toast.error("API Key가 유효하지 않습니다.");
+                }
+            } else if (sessionEmail) {
+                setUsername(sessionEmail);
+                setSessionToken(true);
+                const foundUser = savedUsers.find(user => user.email === sessionEmail);
+                if (! await validateApiKey(foundUser?.password || "")) {
+                    toast.error("API Key가 유효하지 않습니다.");
+                }
+
+                // 카카오 로그인 처리
+                if(isKakaoLogin){
+                    if (await checkAccessTokenValidity()) {
+                        setKakaoToken(true);
+                        setSessionToken(false);
+
+                        if (!savedUsers.find(user => user.email === sessionEmail)) {
+                            toast.error("카카오 사용자 로그인 오류");
+                            handleLogout();
+                        }
+                    }
+                }
             }
-        } else if (sessionEmail) {
-            setUsername(sessionEmail);
-            setSessionToken(true);
-            const foundUser = savedUsers.find(user => user.email === localEmail);
-            if(!validateApiKey(foundUser?.password || "")){
-                toast.error("API Key가 유효하지 않습니다.");
-            }
-        } else if(isKakaoLogin){
-            setKakaoToken(true);
-            // 카카오 로그인 관련 코드
+        };
 
-        }
+        initializeUser(); // 비동기 함수 호출
     }, []);
 
-    /*const checkAccessTokenValidity = async () => {
+    const checkAccessTokenValidity = async () => {
         const token = sessionStorage.getItem('kakaoAccessToken');
         if (!token) {
             toast.error('Access Token이 없습니다.');
@@ -76,39 +89,41 @@ function App() {
             toast.error('Access Token 유효성 확인 중 오류 발생');
             return false;
         }
-    };*/
-
+    };
 
     const handleLogout = () => {
         setSessionToken(false);
         setLocalToken(false);
-        setKakaoToken(false);
         if(kakaoToken){
+            if (window.Kakao && window.Kakao.Auth) {
+                window.Kakao.Auth.logout();
+            }
+
             sessionStorage.removeItem('kakaoAccessToken');
-            sessionStorage.removeItem('kakaoPK');
             sessionStorage.removeItem('kakaoName');
-            const kakaoPK =  sessionStorage.getItem('kakaoPK');
-            sessionStorage.removeItem('kakaoPK');
+            sessionStorage.removeItem('kakaoProfile');
 
-            // 카카오 유저의 계정 로컬에서 삭제 ( 필터링 후 재저장 )
-            const users = JSON.parse(localStorage.getItem('users') || '[]');
-            const updatedUsers = users.filter((user: User) => user.email !== kakaoPK);
-            localStorage.setItem('users', JSON.stringify(updatedUsers));
-
-            window.Kakao.Auth.logout();
+            setKakaoToken(false);
+        } else{
+            localStorage.removeItem('localUserEmail'); // 저장된 이메일 삭제, 토큰 삭제와 같음
         }
-        sessionStorage.removeItem('isKakaoLogin');
-        sessionStorage.removeItem('sessionUserEmail');
-        localStorage.removeItem('localUserEmail'); // 저장된 이메일 삭제, 토큰 삭제와 같음
+        sessionStorage.removeItem('sessionUserEmail'); // 카카오 로그인 시에도 여기에 값 저장
         setUsername('Guest');
         window.location.reload();
     };
 
-    const handleKakaoLogin = () => {
-        const kakaoPK = sessionStorage.getItem('kakaoPK'); // 유저 이름 + 유저 프사
-        if(kakaoPK){
-            setUsername(kakaoPK);
-            setKakaoToken(true);
+    // 카카오 로그인 핸들러
+    const handleKakaoLogin = (kakaoUser: string, kakaoProfile: string) => {
+        const tmp = sessionStorage.getItem('sessionUserEmail');
+        sessionStorage.setItem('kakaoName', kakaoUser);
+        sessionStorage.setItem('kakaoProfile', kakaoProfile);
+        setKakaoToken(true);
+
+        if(tmp){
+            setUsername(tmp);
+        } else {
+            toast.error("세션 스토리지 데이터 참조 실패 오류");
+            handleLogout();
         }
     }
 
@@ -125,7 +140,7 @@ function App() {
                 localStorage.setItem('localUserEmail',tmp);
             }
         } else {
-            console.error("Login Error");
+            toast.error("세션 스토리지 데이터 참조 실패 오류");
             handleLogout();
         }
     };
@@ -137,7 +152,7 @@ function App() {
     return (
         <div>
             <BrowserRouter basename="/Maerchen">
-                <Navbar username={username} onLogout={handleLogout} forceRerender={forceRerender}/>
+                <Navbar username={username} onLogout={handleLogout} forceRerender={forceRerender} isKakao={kakaoToken} key={key}/>
                 <Routes>
                     <Route
                         path="/"

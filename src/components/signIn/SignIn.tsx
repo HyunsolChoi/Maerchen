@@ -16,7 +16,7 @@ declare global {
 
 interface SignInProps {
     onLogin: (saveLogin: boolean) => void; // 저장 상태를 전달
-    onKakaoLogin: () => void; // 카카오 로그인 후 호출되는 함수
+    onKakaoLogin: (kakaoUser: string, kakaoProfile: string) => void; // 카카오 로그인 후 호출되는 함수
 }
 
 function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
@@ -28,143 +28,113 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
     const [showModal, setShowModal] = useState(false); // 모달 상태
     const [signUpcheck, setSignUpCheck] = useState<boolean>(false);
 
+    const code = new URL(document.location.toString()).searchParams.get('code');
+
     useEffect(() => {
-        const script = document.createElement('script');
-        script.src = 'https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js';
-        script.integrity = process.env.REACT_APP_KAKAO_SDK_INTEGRITY || '';
-        script.crossOrigin = 'anonymous';
-        script.onload = () => {
-            if (window.Kakao && !window.Kakao.isInitialized()) {
-                window.Kakao.init(process.env.REACT_APP_KAKAO_JS_KEY); // JavaScript 키 초기화
-                console.log('Kakao SDK 초기화 완료'); // 확인용 로그
+        const loadKakaoSDK = () => {
+            if (!window.Kakao) {
+                const script = document.createElement("script");
+                script.src = "https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js";
+                script.integrity = process.env.REACT_APP_KAKAO_SDK_INTEGRITY || '';
+                script.crossOrigin = "anonymous";
+                script.onload = () => {
+                    if (window.Kakao && !window.Kakao.isInitialized()) {
+                        window.Kakao.init(process.env.REACT_APP_KAKAO_JS_KEY || "");
+                        console.log("Kakao SDK initialized");
+                    }
+                };
+                document.head.appendChild(script);
+            } else if (!window.Kakao.isInitialized()) {
+                window.Kakao.init(process.env.REACT_APP_KAKAO_JS_KEY || "");
+                console.log("Kakao SDK initialized");
             }
-
         };
-        document.head.appendChild(script);
-
-        return () => {
-            document.head.removeChild(script);
-        };
-
+        loadKakaoSDK();
     }, []);
 
-    /*const fetchAccessTokenAndUserInfo = async (authCode: string) => {
+
+    useEffect(() => {
+        if (code) {
+            getAccessToken(code); // Access Token 요청
+        }
+    }, [code]);
+
+    // Access Token 발급
+    const getAccessToken = async (authCode: string) => {
         try {
-            // Access Token 발급
-            const tokenResponse = await fetch('https://kauth.kakao.com/oauth/token', {
+            const response = await fetch('https://kauth.kakao.com/oauth/token', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: new URLSearchParams({
                     grant_type: 'authorization_code',
-                    client_id: process.env.REACT_APP_KAKAO_JS_KEY || '', // REST API 키
-                    redirect_uri: process.env.REACT_APP_REDIRECT_URI || '',
+                    client_id: process.env.REACT_APP_REST_API_KEY || '', // REST API 키
+                    redirect_uri: process.env.REACT_APP_REDIRECT_URI || '', // 리다이렉트 URI
                     code: authCode,
                 }).toString(),
             });
 
-            const tokenData = await tokenResponse.json();
-            if (!tokenData.access_token) {
-                toast.error('Access Token 발급 실패');
-                return;
+            const data = await response.json();
+
+            if (data.access_token) {
+                await getUserInfo(data.access_token); // 사용자 정보 요청
+            } else {
+                toast.error('Access Token 발급 실패:', data);
             }
+        } catch (error) {
+            toast.error('access token fetching 에러 발생');
+        }
+    };
 
-            // Access Token 저장
-            window.Kakao.Auth.setAccessToken(tokenData.access_token);
+    // 사용자 정보 요청
+    const getUserInfo = async (accessToken: string) => {
+        let newUser: User = { email, password };
+        const existingUsers = JSON.parse(localStorage.getItem('users') || '[]') as User[];
 
-            // 사용자 정보 요청
-            const userInfo = await window.Kakao.API.request({
-                url: '/v2/user/me',
+        try {
+            const response = await fetch('https://kapi.kakao.com/v2/user/me', {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${accessToken}`, // 액세스 토큰을 헤더에 추가
+                },
             });
 
-            const username = userInfo.properties.nickname; // 사용자 이름
-            const profileImage = userInfo.properties.profile_image; // 프로필 이미지 URL
+            const data = await response.json();
 
-            const newUser: User = { email, password };
-            const existingUsers = JSON.parse(localStorage.getItem('users') || '[]') as User[];
-
-            const TMDB_KEY = process.env.REACT_APP_TMDB_API_KEY || '';
-            if(TMDB_KEY !== ''){
-                if(!validateApiKey(TMDB_KEY)){
-                    toast.error("기본 TMDB API Key가 유효하지 않습니다.");
-                    return;
-                }
-                setEmail(username + profileImage);
-                setPw(TMDB_KEY);
+            // 기본 TMDB 키의 유효성 검사
+            if (await validateApiKey(process.env.REACT_APP_TMDB_API_KEY || '')){
+                newUser.email = data.properties.nickname + data.properties.profile_image
+                newUser.password = process.env.REACT_APP_TMDB_API_KEY || '';
             } else{
-                toast.error("기본 TMDB KEY 오류");
+                toast.error("기본 TMDB API KEY가 유효하지 않습니다.")
                 return;
             }
 
+            // 임시 카카오 로그인 시, 사용자의 이름과 프로필 이미지를 사용해 고유의 아이디를 만들어 유저 항목에 삽입 / 기존 존재하면 중복 처리, 없으면 새로 생성
+            // 사용자가 이름 혹은 프로필 사진을 변경하거나, 프로필 이미지의 경로가 변경되면 별개의 계정으로 취급할수있음. ( 카카오 아이디를 가져오지 못하므로 대체 )
             existingUsers.push(newUser);
             localStorage.setItem('users', JSON.stringify(existingUsers)); // 사용자 목록 저장
 
-            // 사용자 정보를 세션에 저장
-            sessionStorage.setItem('kakaoName', username);
-            sessionStorage.setItem('kakaoPK', `${username}${profileImage}`);
-            sessionStorage.setItem('kakaoProfileImage', profileImage);
-            sessionStorage.setItem('kakaoAccessToken', tokenData.access_token)
+            // 사용자의 이름과 프로필 이미지 합을 이메일에 저장, 이를 키로 지정함.
+            sessionStorage.setItem('sessionUserEmail', newUser.email);
 
+            // 세션에 새 토큰 저장
+            sessionStorage.setItem('kakaoAccessToken', accessToken)
+
+            // App.tsx 의 함수 호출 및 데이터 전달
+            onKakaoLogin(data.properties.nickname, data.properties.profile_image);
         } catch (error) {
-            toast.error('사용자 정보를 가져오는 데 실패했습니다.');
-            console.error(error);
-            throw error;
-        }
-    };*/
-
-   /* const handleRedirectAndProcess = async () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const authCode = urlParams.get('code'); // Authorization Code 추출
-
-        if (authCode) {
-            try {
-                // Access Token과 사용자 정보 처리
-                await fetchAccessTokenAndUserInfo(authCode);
-
-                // 카카오 로그인 상태 저장
-                sessionStorage.setItem('isKakaoLogin', 'true');
-                onKakaoLogin(); // 로그인 후 처리
-
-                // URL 정리
-                window.history.replaceState({}, document.title, '/Maerchen'); // /Maerchen으로 이동
-            } catch (error) {
-                toast.error('인증 처리 중 오류 발생');
-                console.error(error);
-            }
-        }
-    };*/
-
-    const loginWithKakaoTest = () => {
-        // Kakao 객체와 초기화 여부 확인
-        if (window.Kakao && window.Kakao.isInitialized()) {
-            try {
-                window.Kakao.Auth.authorize({
-                    redirectUri: process.env.REACT_APP_REDIRECT_URI || '',
-                });
-            } catch (error) {
-                console.error('Kakao 인증 요청 중 오류 발생:', error);
-            }
-        } else {
-            console.error('Kakao SDK가 초기화되지 않았습니다.');
-            toast.error('Kakao SDK 초기화가 필요합니다.');
+            toast.error('Error fetching user info:' + error);
         }
     };
 
     const loginWithKakao = () => {
         if (window.Kakao) {
             window.Kakao.Auth.authorize({
-                redirectUri: process.env.REACT_APP_REDIRECT_URI || '',
+                redirectUri: process.env.REACT_APP_REDIRECT_URI,
             });
         } else {
-            console.error('Kakao SDK가 초기화되지 않았습니다.');
+            toast.error("Kakao SDK가 초기화되지 않았습니다.");
         }
-
-        // 디버깅
-        /*if(1){
-            sessionStorage.clear(); // 모든 키 삭제
-            localStorage.clear(); // 모든 키 삭제
-            console.log("세션, 로컬 삭제 완료");
-            return;
-        }*/
     };
 
     const toggleSignUp = () => {   // 회원가입, 로그인 창 전환 시 입력 필드 초기화
@@ -216,6 +186,11 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
     };
 
     const handleLogin = async () => {
+        // 혹시나 세션에 남아있을 카카오 로그인 데이터 방지
+        sessionStorage.removeItem('kakaoAccessToken');
+        sessionStorage.removeItem('kakaoName');
+        sessionStorage.removeItem('kakaoProfile');
+
         const savedUsers = JSON.parse(localStorage.getItem('users') || '[]') as User[];
 
         const foundUser = savedUsers.find(user => user.email === email && user.password === password);
@@ -262,10 +237,6 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
             </div>
             <div className={`auth-box ${isSignUp ? 'sign-up-mode' : ''}`}>
                 <h2>{isSignUp ? '회원가입' : '로그인'}</h2>
-                <h3>{"TEST" + process.env.REACT_APP_TMDB_API_KEY}</h3>
-                <h3>{"TEST" + process.env.REACT_APP_KAKAO_JS_KEY}</h3>
-                <h3>{"TEST" + process.env.REACT_APP_KAKAO_SDK_INTEGRITY}</h3>
-                <h3>{"TEST" + process.env.REACT_APP_REDIRECT_URI}</h3>
                 <form onSubmit={handleSubmit}>
                     <input
                         type="text"
@@ -335,9 +306,6 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
                     </div>
                 )}
             </div>
-
-            <button onClick={loginWithKakaoTest}>카카오 로그인</button>
-
 
             {/* 설명 모달 */}
             {showModal && (

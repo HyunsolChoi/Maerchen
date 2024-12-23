@@ -3,19 +3,23 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClapperboard, faUser, faBars } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './Navbar.css';
+import {toast} from "react-toastify";
 
 interface NavbarProps {
     username: string;
     onLogout: () => void;
     forceRerender: () => void;
+    isKakao: boolean;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ username, onLogout, forceRerender }) => {
+const Navbar: React.FC<NavbarProps> = ({ username, onLogout, forceRerender, isKakao }) => {
     const [menuVisible, setMenuVisible] = useState(false);
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const [opacity, setOpacity] = useState(1); // Navbar 투명도 관리
-    const [isVisible, setIsVisible] = useState(true); // Navbar의 표시 여부 관리
+    const [isVisible, setIsVisible] = useState(true); // Navbar 의 표시 여부 관리
     const [lastScrollY, setLastScrollY] = useState(0); // 마지막 스크롤 위치 저장
+    const [kakaoUserName, setKakaoUserName] = useState('');
+    const [kakaoProfile, setKakaoProfile] = useState('');
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -24,6 +28,23 @@ const Navbar: React.FC<NavbarProps> = ({ username, onLogout, forceRerender }) =>
     const menuRef = useRef<HTMLDivElement>(null); // 모바일 메뉴 참조
 
     useEffect(() => {
+        if(isKakao){
+            const name = sessionStorage.getItem("kakaoName") || 'Guest';
+            const profile = sessionStorage.getItem("kakaoProfile") || '';
+
+            if(name === 'Guest')
+                toast.error("카카오 이름 반영 실패");
+
+            if(profile === '')
+                toast.error("카카오 프로필 반영 실패");
+
+            setKakaoUserName(name);
+            setKakaoProfile(profile);
+        }
+    },  [isKakao]);
+
+    useEffect(() => {
+
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
@@ -41,6 +62,7 @@ const Navbar: React.FC<NavbarProps> = ({ username, onLogout, forceRerender }) =>
         return () => {
             window.removeEventListener('scroll', handleScroll);
         };
+
     }, []);
 
     useEffect(() => {
@@ -141,14 +163,19 @@ const Navbar: React.FC<NavbarProps> = ({ username, onLogout, forceRerender }) =>
             </ul>
 
             <div className="user-icon" onClick={toggleDropdown} ref={dropdownRef}>
-                <FontAwesomeIcon icon={faUser}/>
+                {isKakao ? (
+                    <img src={kakaoProfile} alt="Kakao Profile" className="kakao-profile-icon"/>
+                ) : (
+                    <FontAwesomeIcon icon={faUser}/>
+                )}
                 {dropdownVisible && (
                     <div className="dropdown-menu">
-                        <p className="dropdown-item">{username}</p>
+                        <p className="dropdown-item">{isKakao ? kakaoUserName : username}</p>
                         <p className="dropdown-item logout" onClick={onLogout}>로그아웃</p>
                     </div>
                 )}
             </div>
+
             <div className="menu-icon" onClick={toggleMenu} ref={menuRef}>
                 <FontAwesomeIcon icon={faBars}/>
                 {menuVisible && (
@@ -157,7 +184,7 @@ const Navbar: React.FC<NavbarProps> = ({ username, onLogout, forceRerender }) =>
                             className={`dropdown-item mobile ${location.pathname === "/" ? "active" : ""}`}
                             onClick={() => handleNavigate("/")}
                         >
-                            홈
+                        홈
                         </p>
                         <p
                             className={`dropdown-item mobile ${location.pathname === "/popular" ? "active" : ""}`}

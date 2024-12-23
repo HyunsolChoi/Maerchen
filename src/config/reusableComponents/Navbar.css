@@ -82,6 +82,12 @@ body{
     width: 80%; /* 강조선이 길어지는 효과 */
 }
 
+.kakao-profile-icon {
+    width: 40px;
+    height: 40px;
+    object-fit: cover; /* 이미지 비율 유지 */
+}
+
 .user-icon {
     color: white;
     cursor: pointer;
