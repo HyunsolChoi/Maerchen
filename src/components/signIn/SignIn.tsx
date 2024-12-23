@@ -238,6 +238,10 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
             </div>
             <div className={`auth-box ${isSignUp ? 'sign-up-mode' : ''}`}>
                 <h2>{isSignUp ? '회원가입' : '로그인'}</h2>
+                <h3>{process.env.REACT_APP_REST_API_KEY}</h3>
+                <h3>{process.env.REACT_APP_KAKAO_JS_KEY}</h3>
+                <h3>{process.env.REACT_APP_TMDB_API_KEY}</h3>
+                <h3>{process.env.REACT_APP_REDIRECT_URI}</h3>
                 <form onSubmit={handleSubmit}>
                     <input
                         type="text"
