@@ -37,6 +37,7 @@ jobs:
           echo REACT_APP_KAKAO_JS_KEY=${{ secrets.REACT_APP_KAKAO_JS_KEY }} >> .env
           echo REACT_APP_KAKAO_SDK_INTEGRITY=${{ secrets.REACT_APP_KAKAO_SDK_INTEGRITY }} >> .env
           echo REACT_APP_REDIRECT_URI=${{ secrets.REACT_APP_REDIRECT_URI }} >> .env
+          echo REACT_APP_REST_API_KEY=${{ secrets.REACT_APP_REST_API_KEY }} >> .env
 
       # 3. Node.js 환경 설정
       - name: Setup Node.js
