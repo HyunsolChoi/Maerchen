@@ -3,8 +3,9 @@
 <head>
     <meta http-equiv="refresh" content="0; url=/" />
     <script>
-        const redirectTo = location.pathname + location.search;
-        window.location.href = "/" + redirectTo;
+        // 요청된 경로와 쿼리 파라미터를 유지하며 index.html로 전달
+        const redirectPath = location.pathname + location.search + location.hash;
+        window.location.href = "/" + redirectPath;
     </script>
 </head>
 <body></body>

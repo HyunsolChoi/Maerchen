@@ -150,7 +150,7 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
         }
     };
 
-    const loginWithKakao = () => {
+    /*const loginWithKakao = () => {
         const client_id = process.env.REACT_APP_REST_API_KEY || ""; // 카카오 REST API 키
         const redirect_uri = process.env.REACT_APP_REDIRECT_URI || ""; // 리다이렉트 URI
 
@@ -181,8 +181,80 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
         } else {
             toast.error("Kakao SDK가 초기화되지 않았습니다.");
         }
+    };*/
+
+    const loginWithKakaoPopup = () => {
+        if (window.Kakao) {
+            if (!window.Kakao.isInitialized()) {
+                window.Kakao.init(process.env.REACT_APP_KAKAO_JS_KEY || "");
+            }
+
+            try {
+                window.Kakao.Auth.login({
+                    success: (authObj: any) => {
+                        console.log("Access Token:", authObj.access_token);
+                        // 액세스 토큰으로 사용자 정보 요청
+                        sessionStorage.setItem('kakaoAccessToken', authObj.access_token)
+                        fetchUserInfo(authObj.access_token);
+                    },
+                    fail: (err: any) => {
+                        console.error("Kakao Login Failed:", err);
+                    },
+                });
+            } catch (error) {
+                console.error("Kakao Auth Error:", error);
+            }
+        } else {
+            console.error("Kakao SDK not initialized.");
+        }
     };
 
+    const fetchUserInfo = (accessToken: string) => {
+        let newUser: User = { email, password };
+        const existingUsers = JSON.parse(localStorage.getItem('users') || '[]') as User[];
+
+        fetch("https://kapi.kakao.com/v2/user/me", {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log("User Info:", data);
+                // 필요한 작업 처리
+
+                // 기본 TMDB 키의 유효성 검사
+                if (!validateApiKey(process.env.REACT_APP_TMDB_API_KEY || '')) {
+                    toast.error("기본 TMDB API KEY가 유효하지 않습니다.")
+                    return;
+                } else {
+                    newUser.email = data.properties.nickname + data.properties.profile_image
+                    newUser.password = process.env.REACT_APP_TMDB_API_KEY || '';
+                }
+
+                // 임시 카카오 로그인 시, 사용자의 이름과 프로필 이미지를 사용해 고유의 아이디를 만들어 유저 항목에 삽입 / 기존 존재하면 중복 처리, 없으면 새로 생성
+                // 사용자가 이름 혹은 프로필 사진을 변경하거나, 프로필 이미지의 경로가 변경되면 별개의 계정으로 취급할수있음. ( 카카오 아이디를 가져오지 못하므로 대체 )
+                existingUsers.push(newUser);
+                localStorage.setItem('users', JSON.stringify(existingUsers)); // 사용자 목록 저장
+
+                // 사용자의 이름과 프로필 이미지 합을 이메일에 저장, 이를 키로 지정함.
+                sessionStorage.setItem('sessionUserEmail', newUser.email);
+
+                // 세션에 새 토큰 저장
+                sessionStorage.setItem('kakaoAccessToken', accessToken)
+
+                // App.tsx 의 함수 호출 및 데이터 전달
+                // 디버깅
+                console.log("fking kakao Login ################################");
+
+                // 로그인 함수 호출 및 내부 인증 후 홈으로 이동되도록 함
+                onKakaoLogin(data.properties.nickname, data.properties.profile_image);
+            })
+            .catch((error) => {
+                console.error("Error fetching user info:", error);
+            });
+    };
 
     const toggleSignUp = () => {   // 회원가입, 로그인 창 전환 시 입력 필드 초기화
         setIsSignUp(!isSignUp);
@@ -343,7 +415,7 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
                     <div className="kakao-login-section">
                         <p className="kakao-login-text">카카오로 임시 로그인 하기</p>
                         {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                        <a className="kakao-login-btn" onClick={loginWithKakao}>
+                        <a className="kakao-login-btn" onClick={loginWithKakaoPopup}>
                             <img
                                 src="https://k.kakaocdn.net/14/dn/btroDszwNrM/I6efHub1SN5KCJqLm1Ovx1/o.jpg"
                                 width="200"
