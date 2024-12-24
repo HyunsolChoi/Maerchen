@@ -96,14 +96,18 @@ function App() {
         setSessionToken(false);
         setLocalToken(false);
         if(kakaoToken){
-            sessionStorage.removeItem('kakaoAccessToken');
-            sessionStorage.removeItem('kakaoName');
-            sessionStorage.removeItem('kakaoProfile');
 
-            setKakaoToken(false);
 
             if (window.Kakao && window.Kakao.Auth) {
-                window.Kakao.Auth.logout();
+                window.Kakao.API.request({ url: '/v1/user/unlink',}).then(function(response: any) {
+                    sessionStorage.removeItem('kakaoAccessToken');
+                    sessionStorage.removeItem('kakaoName');
+                    sessionStorage.removeItem('kakaoProfile');
+
+                    setKakaoToken(false);
+                }).catch(function(error: any) {
+                    toast.error('카카오 로그아웃 실패');
+                });
             }
         } else{
             localStorage.removeItem('localUserEmail'); // 저장된 이메일 삭제, 토큰 삭제와 같음

@@ -192,6 +192,8 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
             // Kakao Auth Authorize 호출
             window.Kakao.Auth.authorize({
                 redirectUri: process.env.REACT_APP_REDIRECT_URI || "",
+                scope: 'profile_nickname, profile_image',
+                prompt: 'login',
             });
         } else {
             console.error("Kakao SDK not initialized.");
@@ -206,6 +208,9 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
             // 사용자 정보 요청
             const response = await window.Kakao.API.request({
                 url: "/v2/user/me",
+                data: {
+                    property_keys: ['kakao_account.nickname', 'kakao_account.profile_image'],
+                },
             });
 
             console.log("User Info:", response);
@@ -416,7 +421,7 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
             {showModal && (
                 <div className="modal-overlay" onClick={() => setShowModal(false)}>
                     <div className="modal-content">
-                    <h3>세부 사항</h3>
+                        <h3>세부 사항</h3>
                         <textarea
                             className="modal-textarea"
                             defaultValue={`- 비밀번호는 TMDB의 API KEY로 설정해야합니다.\n- 입력된 정보는 로컬 스토리지에 저장됩니다.`}
