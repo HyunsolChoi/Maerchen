@@ -1,18 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta http-equiv="refresh" content="0; url=/Maerchen/index.html">
-  <script type="text/javascript">
-    (function() {
-      var path = window.location.pathname + window.location.search + window.location.hash;
-      var newUrl = '/Maerchen/index.html';
-
-      if (window.location.pathname !== newUrl) {
-        window.history.replaceState(null, null, path);
-      }
-    })();
-  </script>
-</head>
-<body>
-</body>
-</html>
+<script>
+  // GitHub Pages의 404 처리
+  const redirectTo = location.pathname + location.search;
+  window.location.href = "/Maerchen" + redirectTo;
+</script>

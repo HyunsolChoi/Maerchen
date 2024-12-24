@@ -27,8 +27,6 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
     const [showModal, setShowModal] = useState(false); // 모달 상태
     const [signUpcheck, setSignUpCheck] = useState<boolean>(false);
 
-    const code = new URL(document.location.toString()).searchParams.get('code');
-
     useEffect(() => {
         const loadKakaoSDK = () => {
             if (!window.Kakao) {
@@ -52,11 +50,20 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
     }, []);
 
     useEffect(() => {
+        const queryParams = new URLSearchParams(window.location.search);
+        const code = queryParams.get('code'); // 인가 코드 가져오기
+        if (code) {
+            getAccessToken(code);
+        }
+        // eslint-disable-next-line
+    }, []);
+
+   /* useEffect(() => {
         if (code) {
             getAccessToken(code); // Access Token 요청
         }
-        // eslint-disable-next-line
-    }, [code]);
+
+    }, [code]);*/
 
     // Access Token 발급
     const getAccessToken = async (authCode: string) => {
