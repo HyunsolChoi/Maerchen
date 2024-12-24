@@ -96,6 +96,14 @@ function App() {
         setSessionToken(false);
         setLocalToken(false);
         if(kakaoToken){
+            window.Kakao.Auth.logout()
+                .then(function(response: any) {
+                    console.log(window.Kakao.Auth.getAccessToken()); // null
+                })
+                .catch(function(error: any) {
+                    console.log('Not logged in.');
+                });
+
             sessionStorage.removeItem('kakaoAccessToken');
             sessionStorage.removeItem('kakaoName');
             sessionStorage.removeItem('kakaoProfile');

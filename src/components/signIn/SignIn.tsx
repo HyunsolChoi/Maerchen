@@ -80,6 +80,7 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
             if (!response.ok) {
                 console.error(`Access Token 요청 실패: ${response.status}`, await response.text());
                 toast.error('Kakao Access Token 요청 실패');
+                return;
             }
 
             const data = await response.json();
