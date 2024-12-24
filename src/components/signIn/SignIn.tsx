@@ -129,15 +129,24 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
     };
 
     const loginWithKakao = () => {
-
         if (window.Kakao) {
-            window.Kakao.Auth.authorize({
-                redirectUri: process.env.REACT_APP_REDIRECT_URI,
-            });
+            if (!window.Kakao.isInitialized()) {
+                window.Kakao.init(process.env.REACT_APP_KAKAO_JS_KEY || "");
+            }
+
+            try {
+                window.Kakao.Auth.authorize({
+                    redirectUri: process.env.REACT_APP_REDIRECT_URI,
+                });
+            } catch (error) {
+                console.error("Kakao authorize error:", error);
+                toast.error("카카오 인증 요청 중 오류 발생");
+            }
         } else {
             toast.error("Kakao SDK가 초기화되지 않았습니다.");
         }
     };
+
 
     const toggleSignUp = () => {   // 회원가입, 로그인 창 전환 시 입력 필드 초기화
         setIsSignUp(!isSignUp);
