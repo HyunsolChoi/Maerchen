@@ -101,9 +101,6 @@ function App() {
 
         if(token){
             try {
-                //디버깅
-                console.log(token);
-
                 const response = await fetch('https://kapi.kakao.com/v1/user/logout', {
                     method: 'POST',
                     headers: {
@@ -113,6 +110,8 @@ function App() {
 
                 if (!response.ok){
                     toast.error('Access Token 만료 실패' + response.status);
+                } else{
+                    console.log("만료 성공!");
                 }
             } catch (error) {
                 console.error('Access Token 만료 중 오류 발생', error);
