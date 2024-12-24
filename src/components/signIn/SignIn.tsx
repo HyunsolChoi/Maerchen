@@ -142,8 +142,10 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
         const redirect_uri = process.env.REACT_APP_REDIRECT_URI || ""; // 리다이렉트 URI
         const scope = "profile_nickname,profile_image"; // 요청할 권한 스코프
 
+        // 디버깅
         console.log(redirect_uri);
         console.log(client_id);
+
         if((client_id==="" )||(redirect_uri==="")){
             toast.error("secret 에러");
             return;
