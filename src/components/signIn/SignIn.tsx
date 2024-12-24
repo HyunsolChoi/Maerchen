@@ -54,6 +54,9 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
         const code = queryParams.get('code'); // 인가 코드 가져오기
         if (code) {
             getAccessToken(code);
+            // 중첩 방지: URL 에서 query 제거
+            const cleanUrl = window.location.origin + window.location.pathname;
+            window.history.replaceState({}, document.title, cleanUrl);
         }
         // eslint-disable-next-line
     }, []);
@@ -62,7 +65,7 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
         if (code) {
             getAccessToken(code); // Access Token 요청
         }
-
+        // eslint-disable-next-line
     }, [code]);*/
 
     // Access Token 발급
