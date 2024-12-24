@@ -99,6 +99,8 @@ function App() {
         setLocalToken(false);
         if(iskakaoToken){
             try {
+                checkAccessTokenValidity();
+                console.log(kakaoToken);
                 const response = await fetch('https://kapi.kakao.com/v1/user/logout', {
                     method: 'POST',
                     headers: {
