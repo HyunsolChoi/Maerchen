@@ -129,12 +129,6 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
     };
 
     const loginWithKakao = () => {
-        // 디버깅
-        window.Kakao.Auth.logout();
-        sessionStorage.removeItem('kakaoAccessToken');
-        sessionStorage.removeItem('kakaoName');
-        sessionStorage.removeItem('kakaoProfile');
-        toast.success("기존 내용 삭제");
 
         if (window.Kakao) {
             window.Kakao.Auth.authorize({
