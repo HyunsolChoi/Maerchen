@@ -95,7 +95,7 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
             if (data.access_token) {
                 // 디버깅
                 console.log('Access Token:', data.access_token);
-                await getUserInfo(data.access_token); // 사용자 정보 요청
+                fetchUserInfo(data.access_token); // Access Token으로 사용자 정보 요청
             } else {
                 toast.error('Access Token 발급 실패:', data);
             }
@@ -105,7 +105,7 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
     };
 
     // 사용자 정보 요청
-    const getUserInfo = async (accessToken: string) => {
+    /*const getUserInfo = async (accessToken: string) => {
         let newUser: User = { email, password };
         const existingUsers = JSON.parse(localStorage.getItem('users') || '[]') as User[];
 
@@ -149,7 +149,7 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
             toast.error('Error fetching user info:' + error);
         }
     };
-
+*/
     /*const loginWithKakao = () => {
         const client_id = process.env.REACT_APP_REST_API_KEY || ""; // 카카오 REST API 키
         const redirect_uri = process.env.REACT_APP_REDIRECT_URI || ""; // 리다이렉트 URI
@@ -189,68 +189,57 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
                 window.Kakao.init(process.env.REACT_APP_KAKAO_JS_KEY || "");
             }
 
+            // Kakao Auth Authorize 호출
             window.Kakao.Auth.authorize({
-                redirectUri: "https://hyunsolchoi.github.io/Maerchen/signin",
-                success: function (response: any) {
-                    console.log("Authorization successful:", response);
-                    // Access Token 설정
-                    window.Kakao.Auth.setAccessToken(response.access_token);
-                    fetchUserInfo(response.access_token);
-                },
-                fail: function (error: any) {
-                    console.error("Authorization failed:", error);
-                    toast.error("Kakao 인증 실패");
-                },
+                redirectUri: process.env.REACT_APP_REDIRECT_URI || "",
             });
         } else {
             console.error("Kakao SDK not initialized.");
         }
     };
-    const fetchUserInfo = (accessToken: string) => {
-        let newUser: User = { email, password };
-        const existingUsers = JSON.parse(localStorage.getItem('users') || '[]') as User[];
 
-        window.Kakao.API.request({
-            url: "/v2/user/me",
-            success: function (response: any) {
-                // 디버깅
-                console.log("User Info:", response);
+    const fetchUserInfo = async (accessToken: string) => {
+        let newUser: User = { email: "", password: "" };
+        const existingUsers = JSON.parse(localStorage.getItem("users") || "[]") as User[];
 
-                // 사용자 정보를 세션 스토리지 또는 상태로 저장
-                const data = response.json();
+        try {
+            // 사용자 정보 요청
+            const response = await window.Kakao.API.request({
+                url: "/v2/user/me",
+            });
 
-                // 기본 TMDB 키의 유효성 검사
-                if (!validateApiKey(process.env.REACT_APP_TMDB_API_KEY || '')) {
-                    toast.error("기본 TMDB API KEY가 유효하지 않습니다.")
-                    return;
-                } else {
-                    newUser.email = data.properties.nickname + data.properties.profile_image
-                    newUser.password = process.env.REACT_APP_TMDB_API_KEY || '';
-                }
+            console.log("User Info:", response);
 
-                // 임시 카카오 로그인 시, 사용자의 이름과 프로필 이미지를 사용해 고유의 아이디를 만들어 유저 항목에 삽입 / 기존 존재하면 중복 처리, 없으면 새로 생성
-                // 사용자가 이름 혹은 프로필 사진을 변경하거나, 프로필 이미지의 경로가 변경되면 별개의 계정으로 취급할수있음. ( 카카오 아이디를 가져오지 못하므로 대체 )
+            // TMDB API 키 유효성 검사
+            const isValidApiKey = await validateApiKey(process.env.REACT_APP_TMDB_API_KEY || "");
+            if (!isValidApiKey) {
+                toast.error("기본 TMDB API KEY가 유효하지 않습니다.");
+                return;
+            }
+
+            // 사용자 정보 저장
+            newUser.email = response.properties.nickname + response.properties.profile_image;
+            newUser.password = process.env.REACT_APP_TMDB_API_KEY || "";
+
+            // 기존 사용자 목록에 추가 또는 중복 처리
+            const existingUser = existingUsers.find((user) => user.email === newUser.email);
+            if (!existingUser) {
                 existingUsers.push(newUser);
-                localStorage.setItem('users', JSON.stringify(existingUsers)); // 사용자 목록 저장
+                localStorage.setItem("users", JSON.stringify(existingUsers));
+            }
 
-                // 사용자의 이름과 프로필 이미지 합을 이메일에 저장, 이를 키로 지정함.
-                sessionStorage.setItem('sessionUserEmail', newUser.email);
+            // 세션 정보 저장
+            sessionStorage.setItem("sessionUserEmail", newUser.email);
+            sessionStorage.setItem("kakaoAccessToken", accessToken);
 
-                // 세션에 새 토큰 저장
-                sessionStorage.setItem('kakaoAccessToken', accessToken)
+            console.log("User successfully logged in via Kakao");
 
-                // App.tsx 의 함수 호출 및 데이터 전달
-                // 디버깅
-                console.log("fking kakao Login ################################");
-
-                // 로그인 함수 호출 및 내부 인증 후 홈으로 이동되도록 함
-                onKakaoLogin(data.properties.nickname, data.properties.profile_image);
-            },
-            fail: function (error: any) {
-                console.error("Failed to fetch user info:", error);
-                toast.error("사용자 정보를 가져오는데 실패했습니다.");
-            },
-        });
+            // 로그인 완료 콜백 호출
+            onKakaoLogin(response.properties.nickname, response.properties.profile_image);
+        } catch (error) {
+            console.error("Failed to fetch user info:", error);
+            toast.error("사용자 정보를 가져오는데 실패했습니다.");
+        }
     };
 
     const toggleSignUp = () => {   // 회원가입, 로그인 창 전환 시 입력 필드 초기화
