@@ -4,16 +4,11 @@
   <meta http-equiv="refresh" content="0; url=/Maerchen/index.html">
   <script type="text/javascript">
     (function() {
-      // 현재 경로를 React Router가 처리할 수 있도록 수정
-      var path = window.location.pathname;
-      var search = window.location.search;
-      var hash = window.location.hash;
+      var path = window.location.pathname + window.location.search + window.location.hash;
+      var newUrl = '/Maerchen/index.html';
 
-      // React Router의 경로를 유지하며 index.html로 리다이렉트
-      var newUrl = '/Maerchen/index.html' + search + hash;
-
-      if (path !== newUrl) {
-        window.history.replaceState(null, null, newUrl);
+      if (window.location.pathname !== newUrl) {
+        window.history.replaceState(null, null, path);
       }
     })();
   </script>
