@@ -96,15 +96,15 @@ function App() {
         setSessionToken(false);
         setLocalToken(false);
         if(kakaoToken){
-            if (window.Kakao && window.Kakao.Auth) {
-                window.Kakao.Auth.logout();
-            }
-
             sessionStorage.removeItem('kakaoAccessToken');
             sessionStorage.removeItem('kakaoName');
             sessionStorage.removeItem('kakaoProfile');
 
             setKakaoToken(false);
+
+            if (window.Kakao && window.Kakao.Auth) {
+                window.Kakao.Auth.logout();
+            }
         } else{
             localStorage.removeItem('localUserEmail'); // 저장된 이메일 삭제, 토큰 삭제와 같음
         }

@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>404 Error</title>
-    <meta http-equiv="refresh" content="0; url=/Maerchen/" />
+    <meta http-equiv="refresh" content="0; url=/" />
+    <script>
+        const redirectTo = location.pathname + location.search;
+        window.location.href = "/" + redirectTo;
+    </script>
 </head>
 <body></body>
 </html>

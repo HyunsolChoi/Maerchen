@@ -6,6 +6,7 @@ import {validateApiKey} from '../../config/utils/validateApiKey';
 import {faClapperboard} from '@fortawesome/free-solid-svg-icons';
 import {User} from '../../config/interfaces';
 import {toast} from 'react-toastify';
+import {useLocation} from "react-router-dom";
 
 declare global {
     interface Window {
@@ -26,6 +27,8 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
     const [isSave, setIsSave] = useState<boolean>(false); // 로그인 정보 저장 체크 상태
     const [showModal, setShowModal] = useState(false); // 모달 상태
     const [signUpcheck, setSignUpCheck] = useState<boolean>(false);
+
+    const location = useLocation();
 
     useEffect(() => {
         const loadKakaoSDK = () => {
@@ -50,16 +53,16 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
     }, []);
 
     useEffect(() => {
-        const queryParams = new URLSearchParams(window.location.search);
-        const code = queryParams.get('code'); // 인가 코드 가져오기
+        const queryParams = new URLSearchParams(location.search);
+        const code = queryParams.get("code");
+
         if (code) {
+            console.log("Authorization code:", code);
+            // Access Token 요청 처리
             getAccessToken(code);
-            // 중첩 방지: URL 에서 query 제거
-            const cleanUrl = window.location.origin + window.location.pathname;
-            window.history.replaceState({}, document.title, cleanUrl);
         }
         // eslint-disable-next-line
-    }, []);
+    }, [location]);
 
    /* useEffect(() => {
         if (code) {
