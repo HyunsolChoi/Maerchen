@@ -140,7 +140,7 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
     const loginWithKakao = () => {
         const client_id = process.env.REACT_APP_REST_API_KEY || ""; // 카카오 REST API 키
         const redirect_uri = process.env.REACT_APP_REDIRECT_URI || ""; // 리다이렉트 URI
-        const scope = "profile_nickname,profile_image"; // 요청할 권한 스코프
+        //const scope = "profile_nickname,profile_image"; // 요청할 권한 스코프
 
         // 디버깅
         console.log("TMDB API Key:", process.env.REACT_APP_TMDB_API_KEY);
