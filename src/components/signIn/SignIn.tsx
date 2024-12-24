@@ -31,28 +31,6 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
     const location = useLocation();
 
     useEffect(() => {
-        const loadKakaoSDK = () => {
-            if (!window.Kakao) {
-                const script = document.createElement("script");
-                script.src = "https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js";
-                script.integrity = process.env.REACT_APP_KAKAO_SDK_INTEGRITY || '';
-                script.crossOrigin = "anonymous";
-                script.onload = () => {
-                    if (window.Kakao && !window.Kakao.isInitialized()) {
-                        window.Kakao.init(process.env.REACT_APP_KAKAO_JS_KEY || "");
-                        console.log("Kakao SDK initialized");
-                    }
-                };
-                document.head.appendChild(script);
-            } else if (!window.Kakao.isInitialized()) {
-                window.Kakao.init(process.env.REACT_APP_KAKAO_JS_KEY || "");
-                console.log("Kakao SDK initialized");
-            }
-        };
-        loadKakaoSDK();
-    }, []);
-
-    useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
         const code = queryParams.get("code");
 

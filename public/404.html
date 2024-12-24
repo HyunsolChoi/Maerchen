@@ -1,11 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="refresh" content="0;url=/" />
-    <script>
-        const redirectPath = location.pathname + location.search + location.hash;
-        location.href = "/Maerchen" + redirectPath;
+    <meta http-equiv="refresh" content="0; url=./">
+    <meta http-equiv="refresh" content="0; url=./index.html">
+    <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            var currentPath = window.location.pathname;
+            var newUrl = '/Maerchen' + currentPath.replace('/Maerchen', '');
+            window.history.replaceState(null, null, newUrl);
+            if (window.location.pathname !== newUrl) {
+                window.history.replaceState(null, null, newUrl);
+            }
+        })();
     </script>
 </head>
-<body></body>
+<body>
+
+</body>
+</html>
 </html>
