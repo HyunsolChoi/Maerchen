@@ -47,6 +47,10 @@ function App() {
 
                 // 카카오 로그인 처리
                 if(isKakaoLogin){
+                    window.Kakao.Auth.authorize({
+                        redirectUri: process.env.REACT_APP_REDIRECT_URI,
+                        prompt: 'none',
+                    });
                     if (await checkAccessTokenValidity()) {
                         setKakaoToken(true);
                         setSessionToken(false);

@@ -142,7 +142,7 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
         const redirect_uri = process.env.REACT_APP_REDIRECT_URI || ""; // 리다이렉트 URI
 
         if((client_id==="" )||(redirect_uri==="")){
-            toast.error("secret 에러");
+            toast.error("Github Secrets 에러");
             return;
         }
 
