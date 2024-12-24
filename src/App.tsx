@@ -106,11 +106,8 @@ function App() {
                     },
                 });
 
-                if (response.ok) {
-                    console.log('Access Token 만료 성공');
-                    sessionStorage.removeItem('kakaoAccessToken'); // 로컬에서 토큰 제거
-                } else {
-                    console.error('Access Token 만료 실패', response.status);
+                if (!response.ok){
+                    toast.error('Access Token 만료 실패' + response.status);
                 }
             } catch (error) {
                 console.error('Access Token 만료 중 오류 발생', error);
