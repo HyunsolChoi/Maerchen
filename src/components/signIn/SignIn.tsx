@@ -153,6 +153,8 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
             try {
                 window.Kakao.Auth.authorize({
                     redirectUri: process.env.REACT_APP_REDIRECT_URI,
+                    scope: 'nickname,profile_image',
+                    prompt: 'login',
                 });
             } catch (error) {
                 console.error("Kakao authorize error:", error);

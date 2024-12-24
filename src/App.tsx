@@ -64,6 +64,14 @@ function App() {
         // eslint-disable-next-line
     }, []);
 
+    useEffect(() => {
+        if (window.Kakao && !window.Kakao.isInitialized()) {
+            // 디버깅
+            console.log("SDK 초기화");
+            window.Kakao.init(process.env.REACT_APP_KAKAO_JS_KEY); // Kakao App Key를 사용하여 초기화
+        }
+    }, []);
+
     const checkAccessTokenValidity = async () => {
         const token = sessionStorage.getItem('kakaoAccessToken');
         if (!token) {
@@ -96,8 +104,6 @@ function App() {
         setSessionToken(false);
         setLocalToken(false);
         if(kakaoToken){
-            checkAccessTokenValidity();
-
             sessionStorage.removeItem('kakaoAccessToken');
             sessionStorage.removeItem('kakaoName');
             sessionStorage.removeItem('kakaoProfile');
