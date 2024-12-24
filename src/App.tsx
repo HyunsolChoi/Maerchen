@@ -79,9 +79,6 @@ function App() {
                 },
             });
 
-            // 디버깅
-            console.log(response);
-
             if (response.ok) {
                 return true; // 유효한 토큰
             } else {
@@ -99,6 +96,8 @@ function App() {
         setSessionToken(false);
         setLocalToken(false);
         if(kakaoToken){
+            checkAccessTokenValidity();
+
             sessionStorage.removeItem('kakaoAccessToken');
             sessionStorage.removeItem('kakaoName');
             sessionStorage.removeItem('kakaoProfile');
