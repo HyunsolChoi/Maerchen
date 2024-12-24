@@ -74,9 +74,16 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
                 }).toString(),
             });
 
+            if (!response.ok) {
+                console.error(`Access Token 요청 실패: ${response.status}`, await response.text());
+                toast.error('Kakao Access Token 요청 실패');
+            }
+
             const data = await response.json();
 
             if (data.access_token) {
+                // 디버깅
+                console.log('Access Token:', data.access_token);
                 await getUserInfo(data.access_token); // 사용자 정보 요청
             } else {
                 toast.error('Access Token 발급 실패:', data);
@@ -122,6 +129,8 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
             sessionStorage.setItem('kakaoAccessToken', accessToken)
 
             // App.tsx 의 함수 호출 및 데이터 전달
+            // 디버깅
+            console.log("fking kakao Login ##########################################");
             onKakaoLogin(data.properties.nickname, data.properties.profile_image);
         } catch (error) {
             toast.error('Error fetching user info:' + error);
