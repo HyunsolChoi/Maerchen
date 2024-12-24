@@ -95,7 +95,7 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
             if (data.access_token) {
                 // 디버깅
                 console.log('Access Token:', data.access_token);
-                fetchUserInfo(data.access_token); // Access Token으로 사용자 정보 요청
+                await getUserInfo(data.access_token); // Access Token으로 사용자 정보 요청
             } else {
                 toast.error('Access Token 발급 실패:', data);
             }
@@ -105,7 +105,7 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
     };
 
     // 사용자 정보 요청
-    /*const getUserInfo = async (accessToken: string) => {
+    const getUserInfo = async (accessToken: string) => {
         let newUser: User = { email, password };
         const existingUsers = JSON.parse(localStorage.getItem('users') || '[]') as User[];
 
@@ -149,8 +149,8 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
             toast.error('Error fetching user info:' + error);
         }
     };
-*/
-    /*const loginWithKakao = () => {
+
+    const loginWithKakao = () => {
         const client_id = process.env.REACT_APP_REST_API_KEY || ""; // 카카오 REST API 키
         const redirect_uri = process.env.REACT_APP_REDIRECT_URI || ""; // 리다이렉트 URI
 
@@ -181,9 +181,9 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
         } else {
             toast.error("Kakao SDK가 초기화되지 않았습니다.");
         }
-    };*/
+    };
 
-    const loginWithKakao = () => {
+    /*const loginWithKakao = () => {
         if (window.Kakao) {
             if (!window.Kakao.isInitialized()) {
                 window.Kakao.init(process.env.REACT_APP_KAKAO_JS_KEY || "");
@@ -198,9 +198,9 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
         } else {
             console.error("Kakao SDK not initialized.");
         }
-    };
+    };*/
 
-    const fetchUserInfo = async (accessToken: string) => {
+   /* const fetchUserInfo = async (accessToken: string) => {
         let newUser: User = { email: "", password: "" };
         const existingUsers = JSON.parse(localStorage.getItem("users") || "[]") as User[];
 
@@ -246,7 +246,7 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
             toast.error("사용자 정보를 가져오는데 실패했습니다.");
         }
     };
-
+*/
     const toggleSignUp = () => {   // 회원가입, 로그인 창 전환 시 입력 필드 초기화
         setIsSignUp(!isSignUp);
         setEmail('');
