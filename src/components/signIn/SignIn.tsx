@@ -129,6 +129,13 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
     };
 
     const loginWithKakao = () => {
+        // 디버깅
+        window.Kakao.Auth.logout();
+        sessionStorage.removeItem('kakaoAccessToken');
+        sessionStorage.removeItem('kakaoName');
+        sessionStorage.removeItem('kakaoProfile');
+        toast.success("기존 내용 삭제");
+
         if (window.Kakao) {
             window.Kakao.Auth.authorize({
                 redirectUri: process.env.REACT_APP_REDIRECT_URI,
@@ -238,7 +245,6 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
             </div>
             <div className={`auth-box ${isSignUp ? 'sign-up-mode' : ''}`}>
                 <h2>{isSignUp ? '회원가입' : '로그인'}</h2>
-                <h3>{process.env.REACT_APP_REDIRECT_URI}</h3>
                 <form onSubmit={handleSubmit}>
                     <input
                         type="text"
