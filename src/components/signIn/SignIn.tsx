@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import './SignIn.css';
 import '../../config/views/toast.css'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { validateApiKey } from '../../config/utils/validateApiKey';
-import { faClapperboard } from '@fortawesome/free-solid-svg-icons';
-import { User } from '../../config/interfaces';
-import { toast } from 'react-toastify';
-import { useEffect } from 'react';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {validateApiKey} from '../../config/utils/validateApiKey';
+import {faClapperboard} from '@fortawesome/free-solid-svg-icons';
+import {User} from '../../config/interfaces';
+import {toast} from 'react-toastify';
 
 declare global {
     interface Window {
@@ -138,7 +137,18 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
     };
 
     const loginWithKakao = () => {
-        if (window.Kakao) {
+        const client_id = process.env.REACT_APP_REST_API_KEY || ""; // 카카오 REST API 키
+        const redirect_uri = process.env.REACT_APP_REDIRECT_URI || ""; // 리다이렉트 URI
+        const scope = "profile_nickname,profile_image"; // 요청할 권한 스코프
+
+        if(client_id===""||redirect_uri===""){
+            toast.error("secret 에러");
+            return;
+        }
+
+        // 카카오 인증 페이지로 리다이렉트
+        window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code&scope=${scope}`;
+      /*  if (window.Kakao) {
             if (!window.Kakao.isInitialized()) {
                 window.Kakao.init(process.env.REACT_APP_KAKAO_JS_KEY || "");
             }
@@ -153,7 +163,7 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
             }
         } else {
             toast.error("Kakao SDK가 초기화되지 않았습니다.");
-        }
+        }*/
     };
 
 
