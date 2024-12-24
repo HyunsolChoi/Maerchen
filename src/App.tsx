@@ -64,14 +64,6 @@ function App() {
         // eslint-disable-next-line
     }, []);
 
-    useEffect(() => {
-        if (window.Kakao && !window.Kakao.isInitialized()) {
-            // 디버깅
-            console.log("SDK 초기화");
-            window.Kakao.init(process.env.REACT_APP_KAKAO_JS_KEY); // Kakao App Key를 사용하여 초기화
-        }
-    }, []);
-
     const checkAccessTokenValidity = async () => {
         const token = sessionStorage.getItem('kakaoAccessToken');
         if (!token) {
@@ -107,12 +99,7 @@ function App() {
             sessionStorage.removeItem('kakaoAccessToken');
             sessionStorage.removeItem('kakaoName');
             sessionStorage.removeItem('kakaoProfile');
-
             setKakaoToken(false);
-
-            if (window.Kakao && window.Kakao.Auth) {
-                window.Kakao.Auth.logout();
-            }
         } else{
             localStorage.removeItem('localUserEmail'); // 저장된 이메일 삭제, 토큰 삭제와 같음
         }
