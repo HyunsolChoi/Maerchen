@@ -142,9 +142,6 @@ function App() {
             toast.error("세션 스토리지 데이터 참조 실패 오류");
             handleLogout();
         }
-
-
-        window.location.reload();
     }
 
     const handleLogin = (saveLogin: boolean) => {
