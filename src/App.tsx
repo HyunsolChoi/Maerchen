@@ -15,8 +15,9 @@ import {User} from "./config/interfaces";
 function App() {
     //세션에 저장된 정보로 인증
     const [sessionToken, setSessionToken] = useState(false);
-    const [kakaoToken, setKakaoToken] = useState(false);
+    const [iskakaoToken, setIsKakaoToken] = useState(false);
     //saveLogin 체크 시 로컬 스토리지에 인증 정보 저장
+    const [kakaoToken, setKakaoToken] = useState('');
     const [localToken, setLocalToken] = useState(false);
     const [username, setUsername] = useState<string>('Guest');
     const [key, setKey] = useState(0);
@@ -26,6 +27,7 @@ function App() {
             const localEmail = localStorage.getItem('localUserEmail');
             const sessionEmail = sessionStorage.getItem('sessionUserEmail');
             const isKakaoLogin = sessionStorage.getItem('kakaoAccessToken');
+            setKakaoToken(isKakaoLogin || '');
 
             const savedUsers = JSON.parse(localStorage.getItem('users') || '[]') as User[];
 
@@ -47,12 +49,8 @@ function App() {
 
                 // 카카오 로그인 처리
                 if(isKakaoLogin){
-                    window.Kakao.Auth.authorize({
-                        redirectUri: process.env.REACT_APP_REDIRECT_URI,
-                        prompt: 'none',
-                    });
                     if (await checkAccessTokenValidity()) {
-                        setKakaoToken(true);
+                        setIsKakaoToken(true);
                         setSessionToken(false);
 
                         if (!savedUsers.find(user => user.email === sessionEmail)) {
@@ -96,22 +94,32 @@ function App() {
         }
     };
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
         setSessionToken(false);
         setLocalToken(false);
-        if(kakaoToken){
-            window.Kakao.Auth.logout()
-                .then(function(response: any) {
-                    console.log(window.Kakao.Auth.getAccessToken()); // null
-                })
-                .catch(function(error: any) {
-                    console.log('Not logged in.');
+        if(iskakaoToken){
+            try {
+                const response = await fetch('https://kapi.kakao.com/v1/user/logout', {
+                    method: 'POST',
+                    headers: {
+                        Authorization: `Bearer ${kakaoToken}`,
+                    },
                 });
+
+                if (response.ok) {
+                    console.log('Access Token 만료 성공');
+                    sessionStorage.removeItem('kakaoAccessToken'); // 로컬에서 토큰 제거
+                } else {
+                    console.error('Access Token 만료 실패', response.status);
+                }
+            } catch (error) {
+                console.error('Access Token 만료 중 오류 발생', error);
+            }
 
             sessionStorage.removeItem('kakaoAccessToken');
             sessionStorage.removeItem('kakaoName');
             sessionStorage.removeItem('kakaoProfile');
-            setKakaoToken(false);
+            setIsKakaoToken(false);
         } else{
             localStorage.removeItem('localUserEmail'); // 저장된 이메일 삭제, 토큰 삭제와 같음
         }
@@ -124,7 +132,7 @@ function App() {
         const tmp = sessionStorage.getItem('sessionUserEmail');
         sessionStorage.setItem('kakaoName', kakaoUser);
         sessionStorage.setItem('kakaoProfile', kakaoProfile);
-        setKakaoToken(true);
+        setIsKakaoToken(true);
 
         if(tmp){
             setUsername(tmp);
@@ -159,12 +167,12 @@ function App() {
     return (
         <div>
             <BrowserRouter basename="/Maerchen">
-                <Navbar username={username} onLogout={handleLogout} forceRerender={forceRerender} isKakao={kakaoToken} key={key}/>
+                <Navbar username={username} onLogout={handleLogout} forceRerender={forceRerender} isKakao={iskakaoToken} key={key}/>
                 <Routes>
                     <Route
                         path="/"
                         element={
-                            sessionToken || localToken || kakaoToken ? (
+                            sessionToken || localToken || iskakaoToken ? (
                                 <Home id={username} key={key}/>
                             ) : (
                                 <Navigate to="/signin" replace/>
@@ -174,7 +182,7 @@ function App() {
                     <Route
                         path="/popular"
                         element={
-                            sessionToken || localToken || kakaoToken ? (
+                            sessionToken || localToken || iskakaoToken ? (
                                 <Popular id={username} key={key}/>
                             ) : (
                                 <Navigate to="/signin" replace/>
@@ -184,7 +192,7 @@ function App() {
                     <Route
                         path="/wishlist"
                         element={
-                            sessionToken || localToken || kakaoToken ? (
+                            sessionToken || localToken || iskakaoToken ? (
                                 <Wishlist id={username} key={key}/>
                             ) : (
                                 <Navigate to="/signin" replace/>
@@ -194,7 +202,7 @@ function App() {
                     <Route
                         path="/search"
                         element={
-                            sessionToken || localToken || kakaoToken ? (
+                            sessionToken || localToken || iskakaoToken ? (
                                 <Search id={username} key={key}/>
                             ) : (
                                 <Navigate to="/signin" replace/>
@@ -204,7 +212,7 @@ function App() {
                     <Route
                         path="/signin"
                         element={
-                            sessionToken || localToken || kakaoToken ? (
+                            sessionToken || localToken || iskakaoToken ? (
                                 <Navigate to="/" replace/>
                             ) : (
                                 <SignIn onLogin={handleLogin} onKakaoLogin={handleKakaoLogin} />
