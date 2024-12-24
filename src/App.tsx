@@ -27,9 +27,6 @@ function App() {
             const sessionEmail = sessionStorage.getItem('sessionUserEmail');
             const isKakaoLogin = sessionStorage.getItem('kakaoAccessToken');
 
-            // 디버깅
-            console.log(isKakaoLogin);
-
             const savedUsers = JSON.parse(localStorage.getItem('users') || '[]') as User[];
 
             if (localEmail) {
@@ -83,9 +80,6 @@ function App() {
             });
 
             if (response.ok) {
-                // 디버깅
-                console.log("카카오 토큰 유효함");
-
                 return true; // 유효한 토큰
             } else {
                 toast.error('Access Token이 유효하지 않습니다.');

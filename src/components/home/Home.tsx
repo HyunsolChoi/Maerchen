@@ -5,6 +5,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import './Home.css';
 import { User, Movie } from '../../config/interfaces';
 import {toggleWish} from "../../config/utils/toggleWish";
+import {toast} from "react-toastify";
 
 interface BannerMovie{
     id: number;
@@ -52,8 +53,9 @@ const Home: React.FC<HomeProps> = ({ id }) => {
 
     useEffect(() => {
         if(!API_KEY) {
-            console.error("Error: API_KEY not found");
-            window.location.replace('/#/signin');
+            toast.error("Error: API_KEY not found");
+            sessionStorage.removeItem('sessionUserEmail');
+            window.location.reload();
             return;
         }
 
@@ -66,7 +68,7 @@ const Home: React.FC<HomeProps> = ({ id }) => {
                 const movies: Movie[] = JSON.parse(storedWishlist);
                 favoriteGenre = getMostFrequentGenre(movies); // 상태에 영화 데이터 저장
             } catch (error) {
-                console.error("로컬 스토리지 데이터 파싱 오류:", error);
+                toast.error("로컬 스토리지 데이터 파싱 오류:" + error);
             }
         }
 

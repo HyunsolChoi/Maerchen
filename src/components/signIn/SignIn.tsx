@@ -57,19 +57,11 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
         const code = queryParams.get("code");
 
         if (code) {
-            console.log("Authorization code:", code);
             // Access Token 요청 처리
             getAccessToken(code);
         }
         // eslint-disable-next-line
     }, [location]);
-
-   /* useEffect(() => {
-        if (code) {
-            getAccessToken(code); // Access Token 요청
-        }
-        // eslint-disable-next-line
-    }, [code]);*/
 
     // Access Token 발급
     const getAccessToken = async (authCode: string) => {
@@ -93,8 +85,6 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
             const data = await response.json();
 
             if (data.access_token) {
-                // 디버깅
-                console.log('Access Token:', data.access_token);
                 await getUserInfo(data.access_token); // Access Token으로 사용자 정보 요청
             } else {
                 toast.error('Access Token 발급 실패:', data);
@@ -139,10 +129,6 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
             // 세션에 새 토큰 저장
             sessionStorage.setItem('kakaoAccessToken', accessToken)
 
-            // App.tsx 의 함수 호출 및 데이터 전달
-            // 디버깅
-            console.log("fking kakao Login ################################");
-
             // 로그인 함수 호출 및 내부 인증 후 홈으로 이동되도록 함
             onKakaoLogin(data.properties.nickname, data.properties.profile_image);
         } catch (error) {
@@ -153,12 +139,6 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
     const loginWithKakao = () => {
         const client_id = process.env.REACT_APP_REST_API_KEY || ""; // 카카오 REST API 키
         const redirect_uri = process.env.REACT_APP_REDIRECT_URI || ""; // 리다이렉트 URI
-
-        // 디버깅
-        console.log("TMDB API Key:", process.env.REACT_APP_TMDB_API_KEY);
-        console.log("Kakao JS Key:", process.env.REACT_APP_KAKAO_JS_KEY);
-        console.log("Redirect URI:", process.env.REACT_APP_REDIRECT_URI);
-        console.log("REST API Key:", process.env.REACT_APP_REST_API_KEY);
 
         if((client_id==="" )||(redirect_uri==="")){
             toast.error("secret 에러");
@@ -183,70 +163,6 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
         }
     };
 
-    /*const loginWithKakao = () => {
-        if (window.Kakao) {
-            if (!window.Kakao.isInitialized()) {
-                window.Kakao.init(process.env.REACT_APP_KAKAO_JS_KEY || "");
-            }
-
-            // Kakao Auth Authorize 호출
-            window.Kakao.Auth.authorize({
-                redirectUri: process.env.REACT_APP_REDIRECT_URI || "",
-                scope: 'profile_nickname, profile_image',
-                prompt: 'login',
-            });
-        } else {
-            console.error("Kakao SDK not initialized.");
-        }
-    };*/
-
-   /* const fetchUserInfo = async (accessToken: string) => {
-        let newUser: User = { email: "", password: "" };
-        const existingUsers = JSON.parse(localStorage.getItem("users") || "[]") as User[];
-
-        try {
-            // 사용자 정보 요청
-            const response = await window.Kakao.API.request({
-                url: "/v2/user/me",
-                data: {
-                    property_keys: ['kakao_account.nickname', 'kakao_account.profile_image'],
-                },
-            });
-
-            console.log("User Info:", response);
-
-            // TMDB API 키 유효성 검사
-            const isValidApiKey = await validateApiKey(process.env.REACT_APP_TMDB_API_KEY || "");
-            if (!isValidApiKey) {
-                toast.error("기본 TMDB API KEY가 유효하지 않습니다.");
-                return;
-            }
-
-            // 사용자 정보 저장
-            newUser.email = response.properties.nickname + response.properties.profile_image;
-            newUser.password = process.env.REACT_APP_TMDB_API_KEY || "";
-
-            // 기존 사용자 목록에 추가 또는 중복 처리
-            const existingUser = existingUsers.find((user) => user.email === newUser.email);
-            if (!existingUser) {
-                existingUsers.push(newUser);
-                localStorage.setItem("users", JSON.stringify(existingUsers));
-            }
-
-            // 세션 정보 저장
-            sessionStorage.setItem("sessionUserEmail", newUser.email);
-            sessionStorage.setItem("kakaoAccessToken", accessToken);
-
-            console.log("User successfully logged in via Kakao");
-
-            // 로그인 완료 콜백 호출
-            onKakaoLogin(response.properties.nickname, response.properties.profile_image);
-        } catch (error) {
-            console.error("Failed to fetch user info:", error);
-            toast.error("사용자 정보를 가져오는데 실패했습니다.");
-        }
-    };
-*/
     const toggleSignUp = () => {   // 회원가입, 로그인 창 전환 시 입력 필드 초기화
         setIsSignUp(!isSignUp);
         setEmail('');
