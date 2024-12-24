@@ -17,7 +17,6 @@ function App() {
     const [sessionToken, setSessionToken] = useState(false);
     const [iskakaoToken, setIsKakaoToken] = useState(false);
     //saveLogin 체크 시 로컬 스토리지에 인증 정보 저장
-    const [kakaoToken, setKakaoToken] = useState('');
     const [localToken, setLocalToken] = useState(false);
     const [username, setUsername] = useState<string>('Guest');
     const [key, setKey] = useState(0);
@@ -27,7 +26,6 @@ function App() {
             const localEmail = localStorage.getItem('localUserEmail');
             const sessionEmail = sessionStorage.getItem('sessionUserEmail');
             const isKakaoLogin = sessionStorage.getItem('kakaoAccessToken');
-            setKakaoToken(isKakaoLogin || '');
 
             const savedUsers = JSON.parse(localStorage.getItem('users') || '[]') as User[];
 
@@ -97,19 +95,19 @@ function App() {
     const handleLogout = async () => {
         setSessionToken(false);
         setLocalToken(false);
-        if(iskakaoToken){
 
-            window.location.reload();
+        // 직접 Access Token 가져오기, 동기화 위해서 직접 가져옴.
+        const token = sessionStorage.getItem('kakaoAccessToken');
 
+        if(token){
             try {
                 //디버깅
-                checkAccessTokenValidity();
-                console.log(kakaoToken);
+                console.log(token);
 
                 const response = await fetch('https://kapi.kakao.com/v1/user/logout', {
                     method: 'POST',
                     headers: {
-                        Authorization: `Bearer ${kakaoToken}`,
+                        Authorization: `Bearer ${token}`,
                     },
                 });
 
@@ -144,6 +142,9 @@ function App() {
             toast.error("세션 스토리지 데이터 참조 실패 오류");
             handleLogout();
         }
+
+
+        window.location.reload();
     }
 
     const handleLogin = (saveLogin: boolean) => {
