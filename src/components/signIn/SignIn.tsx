@@ -156,9 +156,6 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
 
         window.Kakao.Auth.login({
             scope: 'profile_nickname, profile_image',
-            success: function (authObj) {
-
-            }
         });
 
         // 카카오 인증 페이지로 리다이렉트
