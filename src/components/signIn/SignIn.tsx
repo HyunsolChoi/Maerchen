@@ -183,46 +183,41 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
         }
     };*/
 
-    const loginWithKakaoPopup = () => {
+    const loginWithKakao = () => {
         if (window.Kakao) {
             if (!window.Kakao.isInitialized()) {
                 window.Kakao.init(process.env.REACT_APP_KAKAO_JS_KEY || "");
             }
 
-            try {
-                window.Kakao.Auth.login({
-                    success: (authObj: any) => {
-                        console.log("Access Token:", authObj.access_token);
-                        // 액세스 토큰으로 사용자 정보 요청
-                        sessionStorage.setItem('kakaoAccessToken', authObj.access_token)
-                        fetchUserInfo(authObj.access_token);
-                    },
-                    fail: (err: any) => {
-                        console.error("Kakao Login Failed:", err);
-                    },
-                });
-            } catch (error) {
-                console.error("Kakao Auth Error:", error);
-            }
+            window.Kakao.Auth.authorize({
+                redirectUri: "https://hyunsolchoi.github.io/Maerchen/signin",
+                success: function (response: any) {
+                    console.log("Authorization successful:", response);
+                    // Access Token 설정
+                    window.Kakao.Auth.setAccessToken(response.access_token);
+                    fetchUserInfo(response.access_token);
+                },
+                fail: function (error: any) {
+                    console.error("Authorization failed:", error);
+                    toast.error("Kakao 인증 실패");
+                },
+            });
         } else {
             console.error("Kakao SDK not initialized.");
         }
     };
-
     const fetchUserInfo = (accessToken: string) => {
         let newUser: User = { email, password };
         const existingUsers = JSON.parse(localStorage.getItem('users') || '[]') as User[];
 
-        fetch("https://kapi.kakao.com/v2/user/me", {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${accessToken}`,
-            },
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                console.log("User Info:", data);
-                // 필요한 작업 처리
+        window.Kakao.API.request({
+            url: "/v2/user/me",
+            success: function (response: any) {
+                // 디버깅
+                console.log("User Info:", response);
+
+                // 사용자 정보를 세션 스토리지 또는 상태로 저장
+                const data = response.json();
 
                 // 기본 TMDB 키의 유효성 검사
                 if (!validateApiKey(process.env.REACT_APP_TMDB_API_KEY || '')) {
@@ -250,10 +245,12 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
 
                 // 로그인 함수 호출 및 내부 인증 후 홈으로 이동되도록 함
                 onKakaoLogin(data.properties.nickname, data.properties.profile_image);
-            })
-            .catch((error) => {
-                console.error("Error fetching user info:", error);
-            });
+            },
+            fail: function (error: any) {
+                console.error("Failed to fetch user info:", error);
+                toast.error("사용자 정보를 가져오는데 실패했습니다.");
+            },
+        });
     };
 
     const toggleSignUp = () => {   // 회원가입, 로그인 창 전환 시 입력 필드 초기화
@@ -415,7 +412,7 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
                     <div className="kakao-login-section">
                         <p className="kakao-login-text">카카오로 임시 로그인 하기</p>
                         {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                        <a className="kakao-login-btn" onClick={loginWithKakaoPopup}>
+                        <a className="kakao-login-btn" onClick={loginWithKakao}>
                             <img
                                 src="https://k.kakaocdn.net/14/dn/btroDszwNrM/I6efHub1SN5KCJqLm1Ovx1/o.jpg"
                                 width="200"
