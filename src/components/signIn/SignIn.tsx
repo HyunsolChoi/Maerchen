@@ -161,7 +161,7 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
         // 카카오 인증 페이지로 리다이렉트
         //window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code&scope=${scope}`;
 
-        /*  if (window.Kakao) {
+        if (window.Kakao) {
             if (!window.Kakao.isInitialized()) {
                 window.Kakao.init(process.env.REACT_APP_KAKAO_JS_KEY || "");
             }
@@ -176,7 +176,7 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
             }
         } else {
             toast.error("Kakao SDK가 초기화되지 않았습니다.");
-        }*/
+        }
     };
 
 
