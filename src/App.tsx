@@ -96,13 +96,14 @@ function App() {
         setSessionToken(false);
         setLocalToken(false);
         if(kakaoToken){
-            if (window.Kakao && window.Kakao.Auth) {
-                window.Kakao.API.request({ url: '/v1/user/unlink',});
-            }
 
             sessionStorage.removeItem('kakaoAccessToken');
             sessionStorage.removeItem('kakaoName');
             sessionStorage.removeItem('kakaoProfile');
+
+            if (window.Kakao && window.Kakao.Auth) {
+                window.Kakao.API.request({ url: '/v1/user/unlink',});
+            }
 
             setKakaoToken(false);
         } else{
@@ -110,7 +111,6 @@ function App() {
         }
         sessionStorage.removeItem('sessionUserEmail'); // 카카오 로그인 시에도 여기에 값 저장
         setUsername('Guest');
-        window.location.reload();
     };
 
     // 카카오 로그인 핸들러
