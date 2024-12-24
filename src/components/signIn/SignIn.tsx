@@ -156,7 +156,7 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
 
         window.Kakao.Auth.login({
             scope: 'profile_nickname, profile_image',
-            success: function () {
+            success: function (authObj) {
 
             }
         });
@@ -227,7 +227,7 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
         // 새 사용자 추가
         existingUsers.push(newUser);
         localStorage.setItem('users', JSON.stringify(existingUsers)); // 사용자 목록 저장
-        toast.success();
+        toast.success("회원가입 성공!");
         toggleSignUp();
     };
 
@@ -253,7 +253,7 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
         }
 
         if (foundUser) {
-            toast.success();
+            toast.success("로그인 성공!");
             localStorage.setItem('users', JSON.stringify(savedUsers)); // 로그인 후에도 사용자 목록 유지
             sessionStorage.setItem('sessionUserEmail', email);
             onLogin(isSave); // 로그인 성공 시 App.tsx의 상태 업데이트
