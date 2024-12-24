@@ -143,8 +143,11 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
         const scope = "profile_nickname,profile_image"; // 요청할 권한 스코프
 
         // 디버깅
-        console.log(redirect_uri);
-        console.log(client_id);
+        console.log("TMDB API Key:", process.env.REACT_APP_TMDB_API_KEY);
+        console.log("Kakao JS Key:", process.env.REACT_APP_KAKAO_JS_KEY);
+        console.log("Redirect URI:", process.env.REACT_APP_REDIRECT_URI);
+        console.log("REST API Key:", process.env.REACT_APP_REST_API_KEY);
+
 
         if((client_id==="" )||(redirect_uri==="")){
             toast.error("secret 에러");
