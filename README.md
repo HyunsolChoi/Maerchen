@@ -238,5 +238,11 @@ You can learn more in the [Create React App documentation](https://facebook.gith
 
 To learn React, check out the [React documentation](https://reactjs.org/).
 
+## Updated KakaoLogin
+
+You can also login with kakao-account without register.
+
+The nickname and profile image are used for storing and displaying user information.
+
 
 # Thanks for being here !

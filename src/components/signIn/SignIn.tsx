@@ -40,13 +40,13 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
                 script.onload = () => {
                     if (window.Kakao && !window.Kakao.isInitialized()) {
                         window.Kakao.init(process.env.REACT_APP_KAKAO_JS_KEY || "");
-                        console.log("Kakao SDK initialized");
+                        //console.log("Kakao SDK initialized");
                     }
                 };
                 document.head.appendChild(script);
             } else if (!window.Kakao.isInitialized()) {
                 window.Kakao.init(process.env.REACT_APP_KAKAO_JS_KEY || "");
-                console.log("Kakao SDK initialized");
+                //console.log("Kakao SDK initialized");
             }
         };
         loadKakaoSDK();
