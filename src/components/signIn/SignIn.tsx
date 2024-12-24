@@ -140,7 +140,6 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
     const loginWithKakao = () => {
         const client_id = process.env.REACT_APP_REST_API_KEY || ""; // 카카오 REST API 키
         const redirect_uri = process.env.REACT_APP_REDIRECT_URI || ""; // 리다이렉트 URI
-        //const scope = "profile_nickname,profile_image"; // 요청할 권한 스코프
 
         // 디버깅
         console.log("TMDB API Key:", process.env.REACT_APP_TMDB_API_KEY);
@@ -148,18 +147,10 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
         console.log("Redirect URI:", process.env.REACT_APP_REDIRECT_URI);
         console.log("REST API Key:", process.env.REACT_APP_REST_API_KEY);
 
-
         if((client_id==="" )||(redirect_uri==="")){
             toast.error("secret 에러");
             return;
         }
-
-        window.Kakao.Auth.login({
-            scope: 'profile_nickname, profile_image',
-        });
-
-        // 카카오 인증 페이지로 리다이렉트
-        //window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code&scope=${scope}`;
 
         if (window.Kakao) {
             if (!window.Kakao.isInitialized()) {
