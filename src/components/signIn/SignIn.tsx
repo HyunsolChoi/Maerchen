@@ -128,7 +128,7 @@ function SignIn({ onLogin, onKakaoLogin }: SignInProps) {
 
             // App.tsx 의 함수 호출 및 데이터 전달
             // 디버깅
-            console.log("fking kakao Login ##########################################");
+            console.log("fking kakao Login #####################################");
 
             // 로그인 함수 호출 및 내부 인증 후 홈으로 이동되도록 함
             onKakaoLogin(data.properties.nickname, data.properties.profile_image);
